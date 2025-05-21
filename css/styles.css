@@ -1,0 +1,972 @@
+:root {
+    --primary-color: #f3ba2f;
+    --primary-dark: #e0a800;
+    --secondary-color: #0f162e;
+    --secondary-light: #1e2c50;
+    --text-color: #333;
+    --text-light: #666;
+    --bg-color: #f5f7fb;
+    --card-bg: #fff;
+    --border-color: #e0e0e0;
+    --success-color: #4caf50;
+    --error-color: #f44336;
+    --warning-color: #ff9800;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--secondary-color);
+}
+
+header h1 {
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+main {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+@media (min-width: 968px) {
+    main {
+        grid-template-columns: 40% 60%;
+    }
+}
+
+.card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: var(--secondary-color);
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="datetime-local"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="datetime-local"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(243, 186, 47, 0.2);
+}
+
+small {
+    color: var(--text-light);
+    font-size: 0.8rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    border: none;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.token-examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.token-example {
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.token-example:hover {
+    background-color: #e0e0e0;
+}
+
+.datetime-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+@media (min-width: 768px) {
+    .datetime-container {
+        flex-direction: row;
+        align-items: flex-end;
+    }
+}
+
+.datetime-input {
+    flex: 1;
+    position: relative;
+}
+
+/* 日期时间输入框样式优化 */
+input[type="datetime-local"] {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    font-size: 14px;
+    padding: 10px 12px;
+    height: 42px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: #fff;
+    transition: all 0.2s ease;
+    width: 100%;
+    color: var(--secondary-color);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+input[type="datetime-local"]:hover {
+    border-color: var(--primary-color);
+}
+
+input[type="datetime-local"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(243, 186, 47, 0.2);
+}
+
+/* 兼容Firefox的特殊样式 */
+@-moz-document url-prefix() {
+    input[type="datetime-local"] {
+        padding: 8px 10px;
+    }
+}
+
+/* 清除默认日期时间选择器样式 */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.7;
+    filter: invert(0.5);
+    transition: all 0.2s ease;
+    padding: 4px;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+    filter: invert(0.7) sepia(1) saturate(5) hue-rotate(15deg);
+}
+
+.date-note {
+    margin-top: 8px;
+    color: var(--warning-color);
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+.loading-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+}
+
+.hidden {
+    display: none;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: var(--primary-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.initial-message {
+    text-align: center;
+    color: var(--text-light);
+    padding: 30px;
+}
+
+.wallet-result {
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 20px;
+}
+
+.wallet-result:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.wallet-address {
+    font-family: monospace;
+    font-weight: bold;
+    color: var(--secondary-color);
+    word-break: break-all;
+}
+
+.time-range {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.stat-card {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+.stat-value {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+}
+
+.token-activity {
+    margin-top: 15px;
+}
+
+.token-item {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.token-name {
+    font-weight: bold;
+    color: var(--secondary-color);
+    margin-bottom: 5px;
+}
+
+.token-contract {
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-bottom: 10px;
+    word-break: break-all;
+}
+
+/* Token stats section removed */
+
+/* 错误容器样式 */
+.error-container {
+    border-left: 4px solid var(--error-color);
+    background-color: #fff8f8;
+}
+
+.error-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    color: var(--error-color);
+}
+
+.error-header i {
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+.error-header h3 {
+    font-size: 1.1rem;
+    margin: 0;
+    border: none;
+}
+
+#errorMessage {
+    padding: 10px;
+    margin-bottom: 15px;
+    background-color: rgba(244, 67, 54, 0.05);
+    border-radius: 4px;
+    font-family: monospace;
+    word-break: break-all;
+}
+
+.error-tips {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.error-tips ul {
+    margin-left: 20px;
+    margin-top: 5px;
+}
+
+.error-tips li {
+    margin-bottom: 5px;
+}
+
+.error-message {
+    color: var(--error-color);
+    padding: 10px;
+    background-color: rgba(244, 67, 54, 0.05);
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+/* USDT价值样式 */
+.usdt-value {
+    display: block;
+    font-size: 0.85rem;
+    margin-top: 2px;
+    color: #777;
+}
+
+.token-stat-value .usdt-value {
+    font-weight: normal;
+}
+
+/* 交易详情区域样式 */
+.transaction-section {
+    margin-top: 20px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 15px;
+}
+
+.toggle-details {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--primary-color);
+    user-select: none;
+}
+
+.toggle-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    margin-right: 8px;
+    font-weight: bold;
+}
+
+.transaction-details {
+    margin-top: 15px;
+}
+
+.transaction-details h3 {
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    color: var(--secondary-color);
+}
+
+.transaction-item {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.tx-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.tx-time {
+    flex: 0 0 auto;
+}
+
+.tx-date {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.tx-time-value {
+    font-size: 0.75rem;
+    color: var(--text-light);
+}
+
+.tx-type {
+    flex: 1 1 auto;
+    font-weight: 500;
+    text-align: center;
+    color: var(--secondary-color);
+}
+
+.tx-amount {
+    flex: 0 0 auto;
+    text-align: right;
+}
+
+.tx-in {
+    color: var(--success-color);
+}
+
+.tx-out {
+    color: var(--error-color);
+}
+
+.tx-details {
+    padding: 15px;
+    font-size: 0.9rem;
+}
+
+.tx-label {
+    color: var(--text-light);
+    margin-right: 8px;
+    display: inline-block;
+    width: 70px;
+}
+
+.tx-address-row, .tx-hash-row, .tx-gas-row {
+    margin-bottom: 8px;
+    word-break: break-all;
+}
+
+.tx-address, .tx-hash, .tx-contract {
+    font-family: monospace;
+    color: var(--secondary-color);
+}
+
+.tx-hash, .tx-contract {
+    text-decoration: underline;
+    color: var(--primary-color);
+}
+
+.tx-status-failed {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: rgba(244, 67, 54, 0.1);
+    border-radius: 4px;
+    color: var(--error-color);
+    font-weight: 500;
+    text-align: center;
+}
+
+.tx-failed {
+    opacity: 0.8;
+}
+
+.tx-gas {
+    font-family: monospace;
+    font-size: 0.85rem;
+}
+
+.hidden {
+    display: none;
+}
+
+/* 代币统计选择样式 */
+.token-stats-selection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 10px 0;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 5px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+.token-checkbox {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 5px 10px;
+    transition: all 0.2s ease;
+}
+
+.token-checkbox:hover {
+    border-color: var(--primary-color);
+    background-color: #fffef0;
+}
+
+.token-checkbox input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.token-checkbox label {
+    display: inline;
+    margin: 0;
+    cursor: pointer;
+    font-size: 0.9rem;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.token-stats-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.btn-secondary {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: #2980b9;
+}
+
+.btn-text {
+    background: none;
+    border: none;
+    color: #3498db;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.btn-text:hover {
+    color: #2980b9;
+    text-decoration: underline;
+}
+
+/* 代币统计结果样式 */
+.token-stats-results {
+    margin-top: 15px;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+.token-stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+.token-stats-table th,
+.token-stats-table td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.token-stats-table th {
+    background-color: #f5f5f5;
+    font-weight: 500;
+}
+
+.token-stats-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.token-stats-income {
+    color: var(--success-color);
+}
+
+.token-stats-expense {
+    color: var(--error-color);
+}
+
+.token-stats-balance {
+    font-weight: 500;
+}
+
+.token-stats-positive {
+    color: var(--success-color);
+}
+
+.token-stats-negative {
+    color: var(--error-color);
+}
+
+.no-stats {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 15px 0;
+}
+
+.token-stats-summary {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+/* 钱包选择器和统计类型选择器样式 */
+.wallet-selector {
+    margin-bottom: 15px;
+}
+
+.wallet-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    color: var(--secondary-color);
+    background-color: #fff;
+}
+
+.wallet-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(243, 186, 47, 0.2);
+}
+
+.stats-type-selector {
+    display: flex;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.stats-type-btn {
+    flex: 1;
+    padding: 10px 15px;
+    background-color: #f5f5f5;
+    border: none;
+    color: var(--text-color);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-right: 1px solid var(--border-color);
+}
+
+.stats-type-btn:last-child {
+    border-right: none;
+}
+
+.stats-type-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.stats-type-active {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+
+/* 交易对统计表格样式 */
+.pair-stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    table-layout: fixed;
+}
+
+.pair-stats-table th,
+.pair-stats-table td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    word-break: break-word;
+}
+
+.pair-stats-table th:first-child,
+.pair-stats-table td:first-child {
+    width: 25%;
+}
+
+.pair-stats-table th {
+    background-color: #f5f5f5;
+    font-weight: 500;
+}
+
+.pair-stats-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.token-from {
+    color: var(--error-color);
+    word-break: break-word;
+    white-space: normal;
+}
+
+.token-to {
+    color: var(--success-color);
+    word-break: break-word;
+    white-space: normal;
+}
+
+.token-arrow {
+    color: #888;
+    padding: 0 5px;
+    font-weight: normal;
+}
+
+.pair-stats-row {
+    cursor: pointer;
+}
+
+.pair-stats-row:hover {
+    background-color: #f0f0f0;
+}
+
+.pair-stats-details {
+    font-size: 0.85rem;
+    color: #777;
+}
+
+/* 选择说明文字样式 */
+.selection-instruction {
+    margin-bottom: 10px;
+    background-color: #f8f8f8;
+    padding: 10px;
+    border-radius: 4px;
+    border-left: 3px solid var(--primary-color);
+}
+
+.selection-instruction p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+/* 交易对选择容器 */
+.pairs-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+/* 交易对复选框样式 */
+.pair-checkbox {
+    flex: 0 0 calc(50% - 8px);
+    max-width: calc(50% - 8px);
+    background-color: #f5f9ff;
+    transition: all 0.2s ease;
+}
+
+.pair-checkbox:hover {
+    background-color: #e7f0ff;
+    border-color: #4a90e2;
+}
+
+.pair-checkbox input[type="checkbox"]:checked + label {
+    font-weight: 500;
+}
+
+.pair-checkbox input[type="checkbox"]:checked + label .token-arrow {
+    color: #4a90e2;
+    font-weight: 500;
+}
+
+/* 移动设备适配 */
+@media (max-width: 768px) {
+    .pair-checkbox {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+/* 结果信息和加载提示 */
+.loading-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f7f7f7;
+    border-radius: 4px;
+}
+
+.mini-spinner {
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-left-color: var(--primary-color);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+}
+
+.result-info {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #e7f5ff;
+    border-radius: 4px;
+    border-left: 3px solid #4a90e2;
+}
+
+.result-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #555;
+    display: flex;
+    align-items: center;
+}
+
+.result-info i {
+    margin-right: 8px;
+    color: #4a90e2;
+}
+
+.error-stats {
+    padding: 10px;
+    background-color: rgba(244, 67, 54, 0.1);
+    color: var(--error-color);
+    border-radius: 4px;
+    border-left: 3px solid var(--error-color);
+}
+
+/* 添加API密钥提示样式 */
+.api-key-tips {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background-color: #f8f9fa;
+    border-left: 3px solid #2196f3;
+    border-radius: 0 4px 4px 0;
+    font-size: 13px;
+}
+
+.api-key-tips p {
+    margin: 5px 0;
+    color: #555;
+}
+
+.api-key-tips i {
+    color: #2196f3;
+    margin-right: 5px;
+}
+
+/* 让密码输入框看起来更明显 */
+#bscScanApiKey {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+#bscScanApiKey:focus {
+    border-color: #2196f3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+    outline: none;
+}
+
+/* 默认时间范围说明样式 */
+.default-time-note {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #f0f8ff;
+    border-left: 3px solid #2196f3;
+    border-radius: 0 4px 4px 0;
+    font-size: 13px;
+    color: #555;
+    display: flex;
+    align-items: flex-start;
+    line-height: 1.4;
+}
+
+.default-time-note i {
+    color: #2196f3;
+    margin-right: 8px;
+    margin-top: 2px;
+}

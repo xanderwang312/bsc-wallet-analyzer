@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>币安智能链钱包交易分析工具</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Alpha BSC钱包交易分析工具</h1>
+            <p>分析币安智能链上钱包的交易数据</p>
+        </header>
+
+        <main>
+            <section class="input-section">
+                <div class="card">
+                    <h2>API设置</h2>
+                    <div class="form-group">
+                        <label for="bscScanApiKey">BscScan API密钥:</label>
+                        <input type="password" id="bscScanApiKey" placeholder="输入您的BscScan API密钥">
+                        <small>在 <a href="https://bscscan.com/myapikey" target="_blank">bscscan.com/myapikey</a> 获取密钥</small>
+                        <div class="api-key-tips">
+                            <p><i class="fas fa-info-circle"></i> 免费API有请求限制(5次/秒)，请自行获取API密钥</p>
+                            <p><i class="fas fa-save"></i> 首次保存后将自动存储在本地，无需重复输入</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>钱包地址</h2>
+                    <div class="form-group">
+                        <label for="walletAddresses">输入钱包地址(每行一个):</label>
+                        <textarea id="walletAddresses" rows="5" placeholder="0x8894e0a0c962cb723c1976a4421c95949be2d4e3"></textarea>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>代币地址</h2>
+                    <div class="form-group">
+                        <label for="tokenAddresses">输入代币合约地址(每行一个):</label>
+                        <textarea id="tokenAddresses" rows="5" placeholder="0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56"></textarea>
+                        <small>留空则分析所有代币</small>
+                    </div>
+
+                    <div class="token-examples">
+                        <div class="token-example" data-address="0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56">
+                            <span>BUSD</span>
+                        </div>
+                        <div class="token-example" data-address="0x55d398326f99059fF775485246999027B3197955">
+                            <span>USDT</span>
+                        </div>
+                        <div class="token-example" data-address="0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82">
+                            <span>CAKE</span>
+                        </div>
+                        <div class="token-example" data-address="0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d">
+                            <span>USDC</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>时间范围 (UTC+8 中国时区)</h2>
+                    <div class="form-group">
+                        <div class="datetime-container">
+                            <div class="datetime-input">
+                                <label for="startDateTime">开始时间:</label>
+                                <input type="datetime-local" id="startDateTime" step="1">
+                            </div>
+                            <div class="datetime-input">
+                                <label for="endDateTime">结束时间:</label>
+                                <input type="datetime-local" id="endDateTime" step="1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="date-note">
+                        <small>注意: 结束时间不能超过当前时间，时间精确到秒 (UTC+8 北京时间)</small>
+                        <div class="default-time-note">
+                            <i class="fas fa-info-circle"></i> 默认时间范围: 如果当前时间在8:00AM之后，则选择今天8:00AM到现在；否则选择前一天8:00AM到现在
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <button id="analyzeButton" class="btn-primary">
+                        <i class="fas fa-search"></i> 分析钱包
+                    </button>
+                </div>
+                
+                <!-- 代币统计区域 -->
+                <div class="card" id="tokenStatsCard" style="display: none;">
+                    <h2>代币交易统计</h2>
+                    <div class="form-group">
+                        <label>选择钱包地址:</label>
+                        <div class="wallet-selector">
+                            <select id="walletSelector" class="wallet-select">
+                                <option value="all">所有钱包合并统计</option>
+                                <!-- 钱包选项将由JavaScript动态生成 -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>统计类型:</label>
+                        <div class="stats-type-selector">
+                            <button id="pairStatsBtn" class="stats-type-btn">交易对统计</button>
+                            <button id="tokenStatsBtn" class="stats-type-btn stats-type-active">代币统计</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 代币统计选择区域 -->
+                    <div id="tokenStatsSection" class="stats-section">
+                        <div class="form-group">
+                            <label>选择要统计的代币:</label>
+                            <div id="tokenStatsSelectionContainer" class="token-stats-selection">
+                                <!-- 代币选择将由JavaScript动态生成 -->
+                            </div>
+                            <div class="token-stats-actions">
+                                <button id="calculateTokenStatsBtn" class="btn btn-secondary">
+                                    <i class="fas fa-calculator"></i> 计算所选代币统计
+                                </button>
+                                <button id="selectAllTokensBtn" class="btn btn-text">
+                                    <i class="fas fa-check-square"></i> 全选
+                                </button>
+                                <button id="unselectAllTokensBtn" class="btn btn-text">
+                                    <i class="fas fa-square"></i> 取消全选
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 交易对统计选择区域 -->
+                    <div id="pairStatsSection" class="stats-section" style="display: none;">
+                        <div class="form-group">
+                            <label>选择要统计的代币兑换对:</label>
+                            <div id="pairStatsSelectionContainer" class="token-stats-selection">
+                                <!-- 交易对选择将由JavaScript动态生成 -->
+                            </div>
+                            <div class="token-stats-actions">
+                                <button id="calculatePairStatsBtn" class="btn btn-secondary">
+                                    <i class="fas fa-calculator"></i> 计算选定的兑换统计
+                                </button>
+                                <button id="selectAllPairsBtn" class="btn btn-text">
+                                    <i class="fas fa-check-square"></i> 全选
+                                </button>
+                                <button id="unselectAllPairsBtn" class="btn btn-text">
+                                    <i class="fas fa-square"></i> 取消全选
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="tokenStatsResultContainer" class="token-stats-results">
+                        <p class="no-stats">请先选择要统计的内容并点击计算按钮</p>
+                    </div>
+                </div>
+                
+                <!-- 错误信息区域 -->
+                <div id="errorContainer" class="card error-container hidden">
+                    <div class="error-header">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>错误信息</h3>
+                    </div>
+                    <div id="errorMessage"></div>
+                    <div class="error-tips">
+                        <p><strong>常见问题解决方案:</strong></p>
+                        <ul>
+                            <li>确保您的API密钥正确且有效</li>
+                            <li>检查钱包地址格式是否正确</li>
+                            <li>确保所选时间不在未来</li>
+                            <li>如遇到API限制错误，请稍后再试</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="results-section">
+                <div class="card">
+                    <h2>分析结果</h2>
+                    <div id="loadingIndicator" class="loading-indicator hidden">
+                        <div class="spinner"></div>
+                        <p>正在分析钱包数据...</p>
+                    </div>
+                    <div id="resultsContainer">
+                        <p class="initial-message">分析结果将显示在这里</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2023 Alpha BSC钱包交易分析工具 | <a href="https://github.com/xanderwang312/bsc-wallet-analyzer" target="_blank">GitHub</a></p>
+        </footer>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html> 
