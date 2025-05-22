@@ -32,6 +32,69 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalTitle = document.getElementById('modalTitle');
     const modalContent = document.getElementById('modalContent');
     
+    // 创建按钮容器，确保按钮并排显示
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'button-container';
+    buttonContainer.style.display = 'flex';
+    buttonContainer.style.gap = '10px';
+    buttonContainer.style.marginBottom = '10px';
+    
+    // 将原按钮移动到容器中
+    analyzeButton.parentNode.insertBefore(buttonContainer, analyzeButton);
+    buttonContainer.appendChild(analyzeButton);
+    
+    // 添加新的查看最新交易按钮
+    const latestButton = document.createElement('button');
+    latestButton.id = 'latestButton';
+    latestButton.className = 'btn btn-primary'; // 使用与原按钮相同的样式
+    latestButton.textContent = '查看最新交易';
+    buttonContainer.appendChild(latestButton);
+    
+    // 添加按钮说明文本
+    const buttonInfo = document.createElement('div');
+    buttonInfo.className = 'button-info';
+    buttonInfo.innerHTML = `
+        <div class="button-info-item">
+            <span class="button-name">查看交易记录：</span>
+            <span class="button-desc">查询输入框时间范围数据，结束时间不会自动填入当前时间</span>
+        </div>
+        <div class="button-info-item">
+            <span class="button-name">查看最新交易：</span>
+            <span class="button-desc">自动更新结束时间为当前时间，以避免想查询最新数据需要手动选择结束时间</span>
+        </div>
+    `;
+    
+    // 将说明文本添加到按钮容器后面
+    buttonContainer.insertAdjacentElement('afterend', buttonInfo);
+    
+    // 添加样式
+    const buttonInfoStyle = document.createElement('style');
+    buttonInfoStyle.textContent = `
+        .button-info {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+        }
+        .button-info-item {
+            margin-bottom: 5px;
+        }
+        .button-info-item:last-child {
+            margin-bottom: 0;
+        }
+        .button-name {
+            font-weight: bold;
+            color: #333;
+        }
+        .button-desc {
+            color: #666;
+        }
+    `;
+    document.head.appendChild(buttonInfoStyle);
+    
     // 显示模态弹窗
     function showModal(title, content) {
         if (modalTitle) modalTitle.textContent = title || '提示';
@@ -523,6 +586,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 100);
     });
     
+    // 为"查看最新交易"按钮添加事件监听器
+    latestButton.addEventListener('click', function() {
+        // 更新结束时间为当前时间
+        const now = new Date();
+        endDateTimeInput.value = formatDateTimeForInput(now);
+        
+        // 显示模态弹窗
+        showModal('提示', `
+            <div class="modal-message">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>开始查询最新交易，请稍候...</p>
+            </div>
+        `);
+        
+        // 延迟执行分析以确保弹窗已显示
+        setTimeout(() => {
+            handleAnalyze();
+        }, 100);
+    });
+    
     // Event listener to ensure start time is not after end time
     startDateTimeInput.addEventListener('change', () => {
         const startValue = startDateTimeInput.value;
@@ -925,6 +1008,23 @@ document.addEventListener('DOMContentLoaded', () => {
         // Show loading indicator
         loadingIndicator.classList.remove('hidden');
         resultsContainer.innerHTML = '';
+
+        // Clear previous statistics data
+        if (tokenStatsResultContainer) {
+            tokenStatsResultContainer.innerHTML = '';
+        }
+        if (tokenStatsSelectionContainer) {
+            tokenStatsSelectionContainer.innerHTML = '';
+        }
+        if (pairStatsSelectionContainer) {
+            pairStatsSelectionContainer.innerHTML = '';
+        }
+
+        // Reset token and pair selections
+        allTokens = [];
+        allTradingPairs = [];
+        currentResults = [];
+        tokenFullNames = {};
 
         try {
             // 显示提示信息
