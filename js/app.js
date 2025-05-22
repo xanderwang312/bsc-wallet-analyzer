@@ -12,6 +12,26 @@
  * 个人使用和学习目的可免费使用。
  */
 
+// 在文件顶部添加千分位格式化函数
+/**
+ * 对数字添加千分位分隔符
+ * @param {string|number} num - 要格式化的数字
+ * @returns {string} 格式化后的数字字符串
+ */
+function formatNumberWithCommas(num) {
+    // 确保传入的是字符串
+    const numStr = typeof num === 'string' ? num : num.toString();
+    
+    // 分离整数部分和小数部分
+    const parts = numStr.split('.');
+    
+    // 对整数部分添加千分位
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    
+    // 重新组合整数和小数部分
+    return parts.join('.');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // DOM elements
     const bscScanApiKeyInput = document.getElementById('bscScanApiKey');
@@ -2147,9 +2167,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // 转换为中国时区
             const chinaDate = convertToChineseTimezone(timestamp);
             
-            // 格式化中国时区的日期和时间
+            // 格式化中国时区的日期和时间（增加秒级显示）
             const dateStr = `${chinaDate.getFullYear()}-${String(chinaDate.getMonth() + 1).padStart(2, '0')}-${String(chinaDate.getDate()).padStart(2, '0')}`;
-            const timeStr = `${String(chinaDate.getHours()).padStart(2, '0')}:${String(chinaDate.getMinutes()).padStart(2, '0')}`;
+            const timeStr = `${String(chinaDate.getHours()).padStart(2, '0')}:${String(chinaDate.getMinutes()).padStart(2, '0')}:${String(chinaDate.getSeconds()).padStart(2, '0')}`;
             
             // 确定交易类型和方向
             let txType = '交易';
@@ -3233,7 +3253,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                         date: txDate,
                                         fromAmount,
                                         toAmount,
-                                        rate: toAmount / fromAmount
+                                        rate: toAmount / fromAmount,
+                                        timestamp: parseInt(item.getAttribute('data-timestamp') || 0)
                                     });
                                 }
                             }
@@ -3277,7 +3298,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                         date: txDate,
                                         fromAmount,
                                         toAmount,
-                                        rate: toAmount / fromAmount
+                                        rate: toAmount / fromAmount,
+                                        timestamp: parseInt(item.getAttribute('data-timestamp') || 0)
                                     });
                                 }
                             }
@@ -3379,13 +3401,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // 生成表格
         let html = `
             <h3>${titleText}</h3>
+
             <table class="pair-stats-table">
                 <thead>
                     <tr>
                         <th>交易对</th>
                         <th>交易次数</th>
                         <th>支出量</th>
+                        <th class="double-trade-column">2倍支出</th>
                         <th>收入量</th>
+                        <th class="double-trade-column">2倍收入</th>
                         <th>平均价格</th>
                     </tr>
                 </thead>
@@ -3416,8 +3441,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 <tr class="pair-stats-row" data-pair="${pair}">
                     <td>${pairDisplay}</td>
                     <td>${stats.totalTrades}</td>
-                    <td class="token-stats-expense">${stats.totalFromAmount.toFixed(4)} ${fromDisplay}</td>
-                    <td class="token-stats-income">${stats.totalToAmount.toFixed(4)} ${toDisplay}</td>
+                    <td class="token-stats-expense">
+                        <div class="number-container">${formatNumberWithCommas(stats.totalFromAmount.toFixed(4))} ${fromDisplay}</div>
+                    </td>
+                    <td class="token-stats-expense double-trade-column">
+                        <div class="number-container">${formatNumberWithCommas((stats.totalFromAmount * 2).toFixed(4))} ${fromDisplay}</div>
+                    </td>
+                    <td class="token-stats-income">
+                        <div class="number-container">${formatNumberWithCommas(stats.totalToAmount.toFixed(4))} ${toDisplay}</div>
+                    </td>
+                    <td class="token-stats-income double-trade-column">
+                        <div class="number-container">${formatNumberWithCommas((stats.totalToAmount * 2).toFixed(4))} ${toDisplay}</div>
+                    </td>
                     <td>${avgRate.toFixed(6)}</td>
                 </tr>
             `;
@@ -3426,10 +3461,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (stats.transactions.length > 0) {
                 html += `
                     <tr class="pair-stats-details" style="display: none;" data-details-for="${pair}">
-                        <td colspan="5">
+                        <td colspan="7">
                             <div class="pair-transactions">
                                 <h4>交易记录</h4>
-                                <table class="pair-transactions-table">
+                                <div class="pair-transactions-controls">
+                                    <button class="btn-sort-date" data-pair="${pair}" data-sort="desc">日期排序 <i class="fas fa-sort-down"></i></button>
+                                    <button class="btn-copy-expenses" data-pair="${pair}">复制支出数据 <i class="fas fa-copy"></i></button>
+                                </div>
+                                <table class="pair-transactions-table" data-pair-table="${pair}">
                                     <thead>
                                         <tr>
                                             <th>日期</th>
@@ -3452,11 +3491,32 @@ document.addEventListener('DOMContentLoaded', () => {
                     const shortHash = tx.hash ? 
                         `${tx.hash.substring(0, 6)}...${tx.hash.substring(tx.hash.length - 4)}` : '';
                     
+                    // 为日期添加秒级显示
+                    const txDate = tx.date;
+                    // 如果日期中没有包含秒信息，尝试从timestamp中获取
+                    let displayDate = txDate;
+                    if (txDate && tx.timestamp) {
+                        // 尝试创建一个包含秒的日期字符串
+                        const dateObj = new Date(tx.timestamp * 1000);
+                        if (!isNaN(dateObj.getTime())) {
+                            // 转换为中国时区
+                            const chinaDate = convertToChineseTimezone(dateObj);
+                            // 格式化中国时区的日期和时间（包含秒）
+                            const dateStr = `${chinaDate.getFullYear()}-${String(chinaDate.getMonth() + 1).padStart(2, '0')}-${String(chinaDate.getDate()).padStart(2, '0')}`;
+                            const timeStr = `${String(chinaDate.getHours()).padStart(2, '0')}:${String(chinaDate.getMinutes()).padStart(2, '0')}:${String(chinaDate.getSeconds()).padStart(2, '0')}`;
+                            displayDate = `${dateStr} ${timeStr}`;
+                        }
+                    }
+                    
                     html += `
-                        <tr>
-                            <td>${tx.date}</td>
-                            <td class="token-stats-expense">${tx.fromAmount.toFixed(4)} ${fromDisplay}</td>
-                            <td class="token-stats-income">${tx.toAmount.toFixed(4)} ${toDisplay}</td>
+                        <tr class="transaction-row" data-date="${tx.date}" data-from-amount="${tx.fromAmount}" data-to-amount="${tx.toAmount}">
+                            <td>${displayDate}</td>
+                            <td class="token-stats-expense">
+                                <div class="number-container">${formatNumberWithCommas(tx.fromAmount.toFixed(4))} ${fromDisplay}</div>
+                            </td>
+                            <td class="token-stats-income">
+                                <div class="number-container">${formatNumberWithCommas(tx.toAmount.toFixed(4))} ${toDisplay}</div>
+                            </td>
                             <td>${txRate.toFixed(6)}</td>
                             <td><a href="https://bscscan.com/tx/${tx.hash}" target="_blank">${shortHash}</a></td>
                         </tr>
@@ -3479,6 +3539,256 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="token-stats-summary">
                 <p>总计交易对: ${sortedPairs.length} | 总交易次数: ${sortedPairs.reduce((sum, [_, stats]) => sum + stats.totalTrades, 0)}</p>
             </div>
+            <style>
+                /* 表格整体样式优化 */
+                .pair-stats-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: 13px; /* 减小字体大小 */
+                    line-height: 1.3;
+                    table-layout: fixed; /* 固定表格布局 */
+                }
+                
+                .pair-stats-table th,
+                .pair-stats-table td {
+                    padding: 8px 10px; /* 调整内边距 */
+                    border: 1px solid #e0e0e0;
+                    text-align: left;
+                    vertical-align: top;
+                    overflow-wrap: break-word;
+                    word-wrap: break-word;
+                }
+                
+                /* 设置各列宽度 */
+                .pair-stats-table th:nth-child(1),
+                .pair-stats-table td:nth-child(1) {
+                    width: 15%; /* 交易对 */
+                }
+                
+                .pair-stats-table th:nth-child(2),
+                .pair-stats-table td:nth-child(2) {
+                    width: 8%; /* 交易次数 */
+                }
+                
+                .pair-stats-table th:nth-child(3),
+                .pair-stats-table td:nth-child(3),
+                .pair-stats-table th:nth-child(4),
+                .pair-stats-table td:nth-child(4),
+                .pair-stats-table th:nth-child(5),
+                .pair-stats-table td:nth-child(5),
+                .pair-stats-table th:nth-child(6),
+                .pair-stats-table td:nth-child(6) {
+                    width: 15%; /* 支出量、2倍支出、2倍收入、收入量 */
+                }
+                
+                .pair-stats-table th:nth-child(7),
+                .pair-stats-table td:nth-child(7) {
+                    width: 10%; /* 平均价格 */
+                }
+                
+                .pair-stats-table th {
+                    background-color: #f5f5f5;
+                    font-weight: 500;
+                    color: #444;
+                    font-size: 12px;
+                }
+                
+                .pair-stats-row:hover {
+                    background-color: #f8f9fa;
+                }
+                
+                                 /* 交易对样式优化 */
+                 .token-from, .token-to {
+                     font-size: 12px;
+                     font-weight: 500;
+                 }
+                 
+                 .token-arrow {
+                     color: #888;
+                     font-size: 11px;
+                     margin: 0 4px;
+                 }
+                 
+                                 .token-stats-expense, .token-stats-income {
+                    font-size: 12px;
+                    white-space: normal; /* 允许换行 */
+                }
+                 
+                                 /* 数字容器样式 */
+                .number-container {
+                    white-space: normal; /* 允许换行 */
+                    word-break: break-word;
+                    word-wrap: break-word;
+                }
+                
+                /* 控制按钮样式 */
+                .table-controls {
+                    display: flex;
+                    justify-content: flex-end;
+                    margin-bottom: 10px;
+                    gap: 10px;
+                }
+                
+                .btn-toggle-column {
+                    padding: 5px 10px;
+                    background-color: #f8f9fa;
+                    border: 1px solid #dee2e6;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 13px;
+                    transition: all 0.2s;
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                }
+                
+                .btn-toggle-column:hover {
+                    background-color: #e9ecef;
+                }
+                
+                .btn-toggle-column.active {
+                    background-color: #e8f4fd;
+                    border-color: #c9e2ff;
+                    color: #2196f3;
+                }
+                
+                /* 交易详情控制按钮 */
+                .pair-transactions-controls {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 10px;
+                    gap: 10px;
+                }
+                
+                .btn-sort-date, .btn-copy-expenses {
+                    padding: 5px 10px;
+                    background-color: #f1f3f5;
+                    border: 1px solid #dee2e6;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 13px;
+                    transition: all 0.2s;
+                    display: flex;
+                    align-items: center;
+                    gap: 5px;
+                }
+                
+                .btn-sort-date:hover, .btn-copy-expenses:hover {
+                    background-color: #e9ecef;
+                }
+                
+                .btn-copy-expenses {
+                    background-color: #e8f4fd;
+                    border-color: #c9e2ff;
+                }
+                
+                .btn-copy-expenses:hover {
+                    background-color: #d0e8fb;
+                }
+                
+                /* 详细交易记录表格样式 */
+                .pair-transactions-table {
+                    font-size: 12px;
+                    width: 100%;
+                    border-collapse: collapse;
+                    table-layout: fixed; /* 固定表格布局 */
+                }
+                
+                .pair-transactions-table th,
+                .pair-transactions-table td {
+                    padding: 6px 8px;
+                    text-align: left;
+                    border: 1px solid #e9ecef;
+                    vertical-align: top;
+                    overflow-wrap: break-word;
+                    word-wrap: break-word;
+                }
+                
+                /* 设置各列宽度 */
+                .pair-stats-table th:nth-child(1),
+                .pair-stats-table td:nth-child(1) {
+                    width: 15%; /* 交易对 */
+                }
+                
+                .pair-stats-table th:nth-child(2),
+                .pair-stats-table td:nth-child(2) {
+                    width: 8%; /* 交易次数 */
+                }
+                
+                .pair-stats-table th:nth-child(3),
+                .pair-stats-table td:nth-child(3),
+                .pair-stats-table th:nth-child(4),
+                .pair-stats-table td:nth-child(4),
+                .pair-stats-table th:nth-child(5),
+                .pair-stats-table td:nth-child(5),
+                .pair-stats-table th:nth-child(6),
+                .pair-stats-table td:nth-child(6) {
+                    width: 15%; /* 支出量、2倍支出、2倍收入、收入量 */
+                }
+                
+                .pair-stats-table th:nth-child(7),
+                .pair-stats-table td:nth-child(7) {
+                    width: 10%; /* 平均价格 */
+                }
+                
+                /* 设置详情表格各列宽度 */
+                .pair-transactions-table th:nth-child(1),
+                .pair-transactions-table td:nth-child(1) {
+                    width: 20%; /* 日期 */
+                }
+                
+                .pair-transactions-table th:nth-child(2),
+                .pair-transactions-table td:nth-child(2),
+                .pair-transactions-table th:nth-child(3),
+                .pair-transactions-table td:nth-child(3) {
+                    width: 25%; /* 支出和收入 */
+                }
+                
+                .pair-transactions-table th:nth-child(4),
+                .pair-transactions-table td:nth-child(4) {
+                    width: 10%; /* 价格 */
+                }
+                
+                .pair-transactions-table th:nth-child(5),
+                .pair-transactions-table td:nth-child(5) {
+                    width: 20%; /* 交易哈希 */
+                }
+                
+                .pair-transactions-table th {
+                    background-color: #f8f9fa;
+                    font-weight: 500;
+                    font-size: 11px;
+                }
+                
+                .pair-transactions-table tr:nth-child(even) {
+                    background-color: #f9f9f9;
+                }
+                
+                .pair-transactions h4 {
+                    font-size: 14px;
+                    margin: 10px 0;
+                }
+                
+                /* 提示消息样式 */
+                .copy-success {
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background-color: rgba(3, 184, 125, 0.9);
+                    color: white;
+                    padding: 10px 20px;
+                    border-radius: 4px;
+                    z-index: 9999;
+                    animation: fadeOut 2s forwards;
+                    animation-delay: 1.5s;
+                    font-size: 13px;
+                }
+                
+                @keyframes fadeOut {
+                    from { opacity: 1; }
+                    to { opacity: 0; }
+                }
+            </style>
         `;
         
         tokenStatsResultContainer.innerHTML = html;
@@ -3493,6 +3803,74 @@ document.addEventListener('DOMContentLoaded', () => {
                     const isVisible = detailsRow.style.display !== 'none';
                     detailsRow.style.display = isVisible ? 'none' : 'table-row';
                 }
+            });
+        });
+        
+        // 2倍交易量默认显示，无需切换按钮
+
+        // 添加日期排序事件
+        document.querySelectorAll('.btn-sort-date').forEach(button => {
+            button.addEventListener('click', function() {
+                const pair = this.getAttribute('data-pair');
+                const currentSort = this.getAttribute('data-sort');
+                const newSort = currentSort === 'desc' ? 'asc' : 'desc';
+                
+                // 更新排序按钮状态
+                this.setAttribute('data-sort', newSort);
+                this.innerHTML = `日期排序 <i class="fas fa-sort-${newSort === 'desc' ? 'down' : 'up'}"></i>`;
+                
+                // 获取该交易对的交易表格和所有行
+                const table = document.querySelector(`table[data-pair-table="${pair}"]`);
+                const tbody = table.querySelector('tbody');
+                const rows = Array.from(tbody.querySelectorAll('tr.transaction-row'));
+                
+                // 根据排序方向对行进行排序
+                rows.sort((a, b) => {
+                    const dateA = new Date(a.getAttribute('data-date'));
+                    const dateB = new Date(b.getAttribute('data-date'));
+                    return newSort === 'desc' ? dateB - dateA : dateA - dateB;
+                });
+                
+                // 重新添加排序后的行到表格
+                rows.forEach(row => tbody.appendChild(row));
+            });
+        });
+        
+        // 添加复制支出数据事件
+        document.querySelectorAll('.btn-copy-expenses').forEach(button => {
+            button.addEventListener('click', function() {
+                const pair = this.getAttribute('data-pair');
+                const table = document.querySelector(`table[data-pair-table="${pair}"]`);
+                const rows = Array.from(table.querySelectorAll('tr.transaction-row'));
+                
+                // 提取所有支出数据
+                const expenses = rows.map(row => {
+                    // 获取支出数据，只提取数值部分
+                    const expenseCell = row.querySelector('td:nth-child(2)');
+                    // 使用正则表达式提取数值部分
+                    const match = expenseCell.textContent.trim().match(/(\d+\.\d+)/);
+                    return match ? match[1] : '0';
+                });
+                
+                // 创建要复制的文本
+                const copyText = expenses.join('\n');
+                
+                // 复制到剪贴板
+                navigator.clipboard.writeText(copyText).then(() => {
+                    // 显示成功提示
+                    const notification = document.createElement('div');
+                    notification.className = 'copy-success';
+                    notification.textContent = '支出数据已复制到剪贴板';
+                    document.body.appendChild(notification);
+                    
+                    // 3.5秒后移除提示
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 3500);
+                }).catch(err => {
+                    console.error('复制失败:', err);
+                    alert('复制失败，请重试');
+                });
             });
         });
     }
@@ -3521,4 +3899,24 @@ document.addEventListener('DOMContentLoaded', () => {
             qrBackdrop.style.display = 'none';
         }
     });
+
+    // 添加千分位格式化函数（放在文件适当位置，例如在显示函数之前）
+    /**
+     * 对数字添加千分位分隔符
+     * @param {string|number} num - 要格式化的数字
+     * @returns {string} 格式化后的数字字符串
+     */
+    function formatNumberWithCommas(num) {
+        // 确保传入的是字符串
+        const numStr = typeof num === 'string' ? num : num.toString();
+        
+        // 分离整数部分和小数部分
+        const parts = numStr.split('.');
+        
+        // 对整数部分添加千分位
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        
+        // 重新组合整数和小数部分
+        return parts.join('.');
+    }
 }); 
