@@ -954,8 +954,25 @@ document.addEventListener('DOMContentLoaded', () => {
             let endTimestamp = Math.floor(utcEndDate.getTime() / 1000);
             endTimestamp = Math.min(endTimestamp, currentTimestamp);
 
+            // 添加更多日志以便调试时间转换问题
+            console.log('输入时间 (中国时区):', startDateTime, '至', endDateTime);
+            console.log('转换后UTC日期:', utcStartDate.toISOString(), '至', utcEndDate.toISOString());
+            console.log('时间戳:', startTimestamp, '至', endTimestamp);
+            console.log('当前时间戳:', currentTimestamp);
             console.log(`分析时间范围: ${new Date(startTimestamp * 1000).toISOString()} 至 ${new Date(endTimestamp * 1000).toISOString()}`);
             console.log(`中国时区时间: ${formatDateTimeForDisplay(startDateTime)} 至 ${formatDateTimeForDisplay(endDateTime)}`);
+            
+            // 确保时间戳不为负数或过大
+            if (startTimestamp <= 0 || startTimestamp > currentTimestamp) {
+                console.error('无效的开始时间戳:', startTimestamp);
+                throw new Error('时间戳转换错误: 开始时间无效');
+            }
+            
+            if (endTimestamp <= 0 || endTimestamp > currentTimestamp) {
+                console.error('无效的结束时间戳:', endTimestamp);
+                endTimestamp = currentTimestamp;
+                console.warn('使用当前时间作为结束时间');
+            }
             
             // Get block numbers for the timestamps
             const startBlock = await getBlockByTimestamp(apiKey, startTimestamp);
@@ -1011,6 +1028,9 @@ document.addEventListener('DOMContentLoaded', () => {
             timestamp = currentTimestamp;
         }
         
+        // 添加时间戳检查日志，便于调试
+        console.log(`请求区块时间戳: ${timestamp}, 对应时间: ${new Date(timestamp * 1000).toLocaleString()}`);
+        
         const url = `https://api.bscscan.com/api?module=block&action=getblocknobytime&timestamp=${timestamp}&closest=before&apikey=${apiKey}`;
         
         try {
@@ -1023,6 +1043,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             const data = await response.json();
+            
+            // 记录完整响应用于调试
+            console.log(`BSCScan API响应:`, data);
             
             // 检查BscScan API响应
             if (data.status !== '1') {
