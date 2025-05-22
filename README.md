@@ -12,3 +12,14 @@
 ### 部分截图
 > 工具支持对钱包代币交易对进行筛选统计，考虑到需要每个人刷的代币对不一样，特此设计了筛选统计，统计出来的是真实交易量，如果需要x2，请自行计算。
 ![1](./images/1.png)
+
+### 支持作者
+> 支持EVM网络所有网络代币打赏，感谢大家的支持！！！
+![1](./images/evm.png)
+
+#### DEX注册
+> 欢迎使用我的邀请链接注册
+- [Binance](https://accounts.marketwebb.me/register?ref=521414726)
+- [OKX](https://okx.com/join/43553005)
+- [Bitget](https://www.bitgetapps.com/zh-CN/referral/register?clacCode=N0HDNH4W&from=%2Fzh-CN%2Fevents%2Freferral-all-program&source=events&utmSource=PremierInviter)
+- [Bybit](https://www.bybitglobal.com/invite?ref=RWVD7JY)
