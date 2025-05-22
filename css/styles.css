@@ -981,3 +981,129 @@ footer {
     margin-right: 8px;
     margin-top: 2px;
 }
+
+/* 开始查询提示样式 */
+.start-query-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+    background-color: #f0f8ff;
+    border-radius: 8px;
+    margin: 20px 0;
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.start-query-message i {
+    color: var(--primary-color);
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.start-query-message p {
+    font-size: 16px;
+    color: #333;
+    margin: 5px 0;
+    font-weight: 500;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* 模态弹窗样式 */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-container {
+    background-color: #fff;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease-in-out;
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    border: none;
+    padding: 0;
+    font-weight: 600;
+}
+
+.modal-close {
+    font-size: 22px;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--secondary-color);
+    line-height: 1;
+}
+
+.modal-close:hover {
+    color: #000;
+}
+
+.modal-content {
+    padding: 20px;
+}
+
+.modal-message {
+    text-align: center;
+    padding: 15px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal-message i {
+    font-size: 32px;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.modal-message p {
+    font-size: 18px;
+    color: #333;
+    margin: 0;
+}
+
+/* 模态弹窗动画 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-open {
+    overflow: hidden;
+}

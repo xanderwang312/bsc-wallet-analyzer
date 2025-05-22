@@ -26,6 +26,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorContainer = document.getElementById('errorContainer');
     const errorMessage = document.getElementById('errorMessage');
     
+    // 模态弹窗元素
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalClose = document.getElementById('modalClose');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalContent = document.getElementById('modalContent');
+    
+    // 显示模态弹窗
+    function showModal(title, content) {
+        if (modalTitle) modalTitle.textContent = title || '提示';
+        if (content && modalContent) {
+            modalContent.innerHTML = content;
+        }
+        if (modalOverlay) {
+            modalOverlay.style.display = 'flex';
+            document.body.classList.add('modal-open');
+        }
+    }
+    
+    // 隐藏模态弹窗
+    function hideModal() {
+        if (modalOverlay) {
+            modalOverlay.style.display = 'none';
+            document.body.classList.remove('modal-open');
+        }
+    }
+    
+    // 绑定模态弹窗关闭事件
+    if (modalClose) {
+        modalClose.addEventListener('click', hideModal);
+    }
+    
+    // 点击模态弹窗外部区域关闭
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) {
+                hideModal();
+            }
+        });
+    }
+    
     // 添加作者信息和项目信息区域 - 移动到页面顶部
     const mainContainer = document.querySelector('.container');
     if (mainContainer) {
@@ -468,7 +508,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Event listeners
-    analyzeButton.addEventListener('click', handleAnalyze);
+    analyzeButton.addEventListener('click', function() {
+        // 显示模态弹窗
+        showModal('提示', `
+            <div class="modal-message">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>开始查询，请稍候...</p>
+            </div>
+        `);
+        
+        // 延迟执行分析以确保弹窗已显示
+        setTimeout(() => {
+            handleAnalyze();
+        }, 100);
+    });
     
     // Event listener to ensure start time is not after end time
     startDateTimeInput.addEventListener('change', () => {
@@ -773,6 +826,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const apiKey = bscScanApiKeyInput.value.trim();
         if (!apiKey) {
+            hideModal(); // 隐藏弹窗
             showError('请输入您的BscScan API密钥');
             bscScanApiKeyInput.focus();
             return;
@@ -787,6 +841,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .filter(line => line.length > 0 && !line.startsWith('#'));
 
         if (walletAddresses.length === 0) {
+            hideModal(); // 隐藏弹窗
             showError('请输入至少一个钱包地址');
             walletAddressesTextarea.focus();
             return;
@@ -795,6 +850,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Validate wallet addresses
         const invalidAddresses = walletAddresses.filter(addr => !isValidAddress(addr));
         if (invalidAddresses.length > 0) {
+            hideModal(); // 隐藏弹窗
             showError(`以下钱包地址格式无效: ${invalidAddresses.join(', ')}`);
             walletAddressesTextarea.focus();
             return;
@@ -809,6 +865,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tokenAddresses.length > 0) {
             const invalidTokens = tokenAddresses.filter(addr => !isValidAddress(addr));
             if (invalidTokens.length > 0) {
+                hideModal(); // 隐藏弹窗
                 showError(`以下代币地址格式无效: ${invalidTokens.join(', ')}`);
                 tokenAddressesTextarea.focus();
                 return;
@@ -819,6 +876,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const endDateTime = endDateTimeInput.value;
 
         if (!startDateTime || !endDateTime) {
+            hideModal(); // 隐藏弹窗
             showError('请选择开始和结束时间');
             return;
         }
@@ -828,12 +886,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const endDate = new Date(endDateTime);
         
         if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+            hideModal(); // 隐藏弹窗
             showError('请输入有效的日期时间格式');
             return;
         }
 
         // 确保开始时间不晚于结束时间
         if (startDate > endDate) {
+            hideModal(); // 隐藏弹窗
             showError('开始时间不能晚于结束时间');
             return;
         }
@@ -844,6 +904,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 确保结束时间不是未来时间
         if (endDate > currentDateTimeChina) {
+            hideModal(); // 隐藏弹窗
             showError('结束时间不能是未来时间');
             // 自动修正结束时间为当前时间
             endDateTimeInput.value = formatDateTimeForInput(currentDateTime);
@@ -853,10 +914,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // 检查时间范围是否太长（超过60天）
         const daysDiff = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24));
         if (daysDiff > 60) {
+            hideModal(); // 隐藏弹窗
             showError('时间范围太长，请选择不超过60天的时间范围');
             return;
         }
 
+        // Hide the modal as we're now showing the loading indicator
+        hideModal();
+        
         // Show loading indicator
         loadingIndicator.classList.remove('hidden');
         resultsContainer.innerHTML = '';
