@@ -3847,8 +3847,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const expenses = rows.map(row => {
                     // 获取支出数据，只提取数值部分
                     const expenseCell = row.querySelector('td:nth-child(2)');
-                    // 使用正则表达式提取数值部分
-                    const match = expenseCell.textContent.trim().match(/(\d+\.\d+)/);
+                    // 使用正则表达式提取数值部分 - 移除千分位分隔符和币种名称
+                    // 首先获取文本内容并删除所有逗号
+                    const textContent = expenseCell.textContent.trim().replace(/,/g, '');
+                    // 然后提取数字部分（忽略币种名称）
+                    const match = textContent.match(/(\d+\.\d+)/);
                     return match ? match[1] : '0';
                 });
                 
