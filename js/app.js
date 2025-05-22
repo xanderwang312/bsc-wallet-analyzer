@@ -1,3 +1,17 @@
+/**
+ * BSC钱包交易分析工具
+ * 
+ * @author Lethe (https://x.com/lethe640604)
+ * @copyright Copyright (c) 2024 Lethe
+ * @license MIT License
+ * 
+ * 本工具用于分析币安智能链上的钱包交易数据，
+ * 支持多钱包分析、代币统计、交易对分析等功能。
+ * 
+ * 保留所有权利。未经许可，禁止商业用途。
+ * 个人使用和学习目的可免费使用。
+ */
+
 document.addEventListener('DOMContentLoaded', () => {
     // DOM elements
     const bscScanApiKeyInput = document.getElementById('bscScanApiKey');
