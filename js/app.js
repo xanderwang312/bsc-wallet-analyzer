@@ -3600,6 +3600,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>-</td>
                 <td>-</td>
             </tr>
+            <tr class="pair-stats-summary double-amount-row">
+                <td><strong>2倍交易量</strong></td>
+                <td><strong>-</strong></td>
+                <td class="token-stats-expense">
+                    <div class="number-container">
+                        ${Object.entries(tokensFromSum).map(([token, amount]) => 
+                            `<div>${formatNumberWithCommas((amount * 2).toFixed(4))} ${token}</div>`
+                        ).join('')}
+                    </div>
+                </td>
+                <td class="token-stats-income">
+                    <div class="number-container">
+                        ${Object.entries(tokensToSum).map(([token, amount]) => 
+                            `<div>${formatNumberWithCommas((amount * 2).toFixed(4))} ${token}</div>`
+                        ).join('')}
+                    </div>
+                </td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
         `;
         
         html += `
@@ -3725,6 +3745,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 .total-summary-row {
                     background-color: #e8f4fd;
+                }
+                
+                .double-amount-row {
+                    background-color: #e0f2f1;
+                    border-bottom: 2px solid #ccc;
                 }
                 
                 .pair-stats-summary div {
