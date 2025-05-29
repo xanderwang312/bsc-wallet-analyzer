@@ -2991,7 +2991,50 @@ document.addEventListener('DOMContentLoaded', () => {
             pairsContainer.appendChild(checkbox);
         });
         
+        // BEGIN: Default selection logic
+        const allPairCheckboxes = pairsContainer.querySelectorAll('input[name="stats-pair"]');
+        const stableCoinsList = ['USDT', 'USDC', 'BUSD', 'DAI']; // Define locally for this function's scope
+
+        allPairCheckboxes.forEach(checkbox => {
+            const pairValue = checkbox.value; // e.g., "TOKENA兑TOKENB"
+            const [fromToken, toToken] = pairValue.split('兑');
+
+            let autoCheck = false;
+
+            // Condition 1: BSC-USD 兑 X (where X is not USDC)
+            if (fromToken === 'BSC-USD' && toToken !== 'USDC') {
+                autoCheck = true;
+            }
+            // Condition 2: USDC 兑 Y (where Y is not BSC-USD and Y is non-stable)
+            // This is checked only if Condition 1 was false.
+            else if (fromToken === 'USDC' && toToken !== 'BSC-USD' && !stableCoinsList.includes(toToken)) {
+                autoCheck = true;
+            }
+
+            if (autoCheck) {
+                checkbox.checked = true;
+            }
+        });
+        // END: Default selection logic
+        
         pairStatsSelectionContainer.appendChild(pairsContainer);
+
+        // BEGIN: Automatically trigger calculation if default pairs were selected
+        const selectedByDefault = Array.from(allPairCheckboxes).some(cb => cb.checked);
+        if (selectedByDefault) {
+            // Ensure the stats result container exists before trying to update it
+            if (tokenStatsResultContainer) {
+                 // Display a brief loading message before calculation
+                tokenStatsResultContainer.innerHTML = '<div class="loading-stats"><div class="mini-spinner"></div><p>正在加载默认统计...</p></div>';
+                // Use a short timeout to allow the UI to update with the loading message
+                setTimeout(() => {
+                    calculateSelectedPairStats();
+                }, 50); // 50ms delay
+            } else {
+                console.warn('tokenStatsResultContainer not found, cannot auto-trigger calculation.');
+            }
+        }
+        // END: Automatically trigger calculation
     }
     
     /**
@@ -3608,6 +3651,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${Object.entries(tokensFromSum).map(([token, amount]) => 
                             `<div>${formatNumberWithCommas((amount * 2).toFixed(4))} ${token}</div>`
                         ).join('')}
+                        ${ (() => {
+                            let grandTotalDoubledExpenses = 0;
+                            Object.values(tokensFromSum).forEach(amount => {
+                                grandTotalDoubledExpenses += (amount * 2);
+                            });
+                            if (grandTotalDoubledExpenses > 0) {
+                                return `<div class="grand-total-doubled-expense" style="margin-top: 8px; font-weight: bold; border-top: 1px solid #bbb; padding-top: 8px;">
+                                    总和(2x): ${formatNumberWithCommas(grandTotalDoubledExpenses.toFixed(4))}
+                                </div>`;
+                            }
+                            return '';
+                        })() }
                     </div>
                 </td>
                 <td class="token-stats-income">
