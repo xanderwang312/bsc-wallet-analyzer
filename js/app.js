@@ -3581,7 +3581,17 @@ document.addEventListener('DOMContentLoaded', () => {
             tokensFromSum[fromToken] += stats.totalFromAmount;
             tokensToSum[toToken] += stats.totalToAmount;
         });
+
+        // Calculate grand total for doubled expenses once
+        let grandTotalDoubledExpenses = 0;
+        Object.values(tokensFromSum).forEach(amount => {
+            grandTotalDoubledExpenses += (amount * 2);
+        });
+        const formattedGrandTotalDoubledExpenses = formatNumberWithCommas(grandTotalDoubledExpenses.toFixed(4));
         
+        // walletAddressAssociatedSum
+        document.getElementById('walletAddressAssociatedSumValue').innerHTML = `${formattedGrandTotalDoubledExpenses}`;
+
         // 添加分割线和汇总标题
         html += `
                 <tr class="summary-header">
@@ -3644,25 +3654,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>-</td>
             </tr>
             <tr class="pair-stats-summary double-amount-row">
-                <td><strong>2倍交易量</strong></td>
+                <td>
+                    <strong>2倍交易量</strong>
+                    ${grandTotalDoubledExpenses > 0 ? `<div style="margin-top: 8px; font-weight: normal; font-size: 0.9em;">总和(2x): ${formattedGrandTotalDoubledExpenses}</div>` : ''}
+                </td>
                 <td><strong>-</strong></td>
                 <td class="token-stats-expense">
                     <div class="number-container">
                         ${Object.entries(tokensFromSum).map(([token, amount]) => 
                             `<div>${formatNumberWithCommas((amount * 2).toFixed(4))} ${token}</div>`
                         ).join('')}
-                        ${ (() => {
-                            let grandTotalDoubledExpenses = 0;
-                            Object.values(tokensFromSum).forEach(amount => {
-                                grandTotalDoubledExpenses += (amount * 2);
-                            });
-                            if (grandTotalDoubledExpenses > 0) {
-                                return `<div class="grand-total-doubled-expense" style="margin-top: 8px; font-weight: bold; border-top: 1px solid #bbb; padding-top: 8px;">
-                                    总和(2x): ${formatNumberWithCommas(grandTotalDoubledExpenses.toFixed(4))}
-                                </div>`;
-                            }
-                            return '';
-                        })() }
+                        ${grandTotalDoubledExpenses > 0 ? `<div class="grand-total-doubled-expense" style="margin-top: 8px; font-weight: bold; border-top: 1px solid #bbb; padding-top: 8px;">
+                                    总和(2x): ${formattedGrandTotalDoubledExpenses}
+                                </div>` : ''}
                     </div>
                 </td>
                 <td class="token-stats-income">
