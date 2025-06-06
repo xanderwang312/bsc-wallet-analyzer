@@ -1178,7 +1178,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const stats = calculateStats(walletAddress, emptyTransactions, tokenTransfers);
             
             // 生成交易详情HTML - 现在只基于tokenTransfers数据
-            const transactionDetailsHtml = generateTransactionDetails(
+            const transactionDetailsHtml = await generateTransactionDetails(
                 walletAddress, 
                 emptyTransactions, 
                 tokenTransfers,
@@ -2060,6 +2060,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    const tokenPriceCache = new Map();
+
+    async function getTokenPriceInUsdt(tokenAddress) {
+        if (tokenPriceCache.has(tokenAddress)) {
+            return tokenPriceCache.get(tokenAddress);
+        }
+
+        // 默认价格
+        const defaultPrice = 0;
+
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5秒超时
+            
+            const url = `https://api.coingecko.com/api/v3/simple/token_price/binance-smart-chain?contract_addresses=${tokenAddress}&vs_currencies=usd`;
+            
+            const response = await fetch(url, {
+                signal: controller.signal,
+                headers: { 'Accept': 'application/json' }
+            });
+            clearTimeout(timeoutId);
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data[tokenAddress.toLowerCase()] && data[tokenAddress.toLowerCase()].usd) {
+                    const price = data[tokenAddress.toLowerCase()].usd;
+                    tokenPriceCache.set(tokenAddress, price);
+                    return price;
+                }
+            }
+            
+            throw new Error(`无法从CoinGecko获取 ${tokenAddress} 的价格`);
+
+        } catch (error) {
+            console.error(`获取 ${tokenAddress} 价格失败:`, error);
+            tokenPriceCache.set(tokenAddress, defaultPrice); // 缓存失败结果，避免重试
+            return defaultPrice;
+        }
+    }
+
     /**
      * 显示交易详情
      * @param {string} walletAddress - 钱包地址
@@ -2068,7 +2108,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {number} bnbPrice - BNB价格（USDT）
      * @returns {string} HTML字符串
      */
-    function generateTransactionDetails(walletAddress, transactions, tokenTransfers, bnbPrice) {
+    async function generateTransactionDetails(walletAddress, transactions, tokenTransfers, bnbPrice) {
         const walletAddressLower = walletAddress.toLowerCase();
         
         // 使用哈希值作为键来合并相关交易
@@ -2152,7 +2192,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let html = '<div class="transaction-list">';
         
         // 为每个交易组生成HTML
-        sortedTxGroups.forEach(txGroup => {
+        for (const txGroup of sortedTxGroups) {
             // 检查该交易组是否包含至少一个与钱包相关的活动
             const hasRelevantActivity = txGroup.activities.some(activity => 
                 activity.from.toLowerCase() === walletAddressLower || 
@@ -2160,7 +2200,7 @@ document.addEventListener('DOMContentLoaded', () => {
             );
             
             if (!hasRelevantActivity) {
-                return; // 跳过不相关的交易组
+                continue; // 跳过不相关的交易组
             }
             
             const timestamp = new Date(txGroup.timestamp * 1000);
@@ -2181,6 +2221,23 @@ document.addEventListener('DOMContentLoaded', () => {
             let toToken = '';
             let tokenPairDisplay = '';
             
+            let expenditureUsdtValueHtml = '';
+            const walletOutActivitiesForValue = txGroup.activities.filter(a => a.from.toLowerCase() === walletAddressLower);
+            if (walletOutActivitiesForValue.length > 0) {
+                // 对于兑换，支出是其中一个代币；对于发送，支出就是那个代币
+                const outActivity = walletOutActivitiesForValue[0];
+                const expenditureTokenAddress = outActivity.contract;
+                const expenditureAmount = outActivity.amount;
+
+                if (expenditureTokenAddress) {
+                    const price = await getTokenPriceInUsdt(expenditureTokenAddress);
+                    if (price > 0) {
+                        const usdtValue = expenditureAmount * price;
+                        expenditureUsdtValueHtml = `<div class="tx-expenditure-value" style="color: red; font-size: 12px;">支出价值: ≈ ${usdtValue.toFixed(2)} USDT</div>`;
+                    }
+                }
+            }
+
             // 检查是否是交易所风格的交易类型
             if (txGroup.activities.length === 1) {
                 // 单一活动，直接使用其方向和值
@@ -2237,7 +2294,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     // 改进代币对显示
                     tokenPairDisplay = `
-                        <div class="token-pair">
+                        <div class="token-pair" data-from-contract="${usdtOutActivity.contract}" data-to-contract="${otherTokenInActivity.contract}">
                             <div class="token-exchange">
                                 <span class="token-out">-${usdtOutActivity.amount.toFixed(2)} ${fromToken}</span>
                                 <span class="exchange-arrow"><i class="fas fa-arrow-right"></i></span>
@@ -2265,7 +2322,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         // 改进代币对显示
                         tokenPairDisplay = `
-                            <div class="token-pair">
+                            <div class="token-pair" data-from-contract="${tokenOutActivity.contract}" data-to-contract="${usdtInActivity.contract}">
                                 <div class="token-exchange">
                                     <span class="token-out">-${tokenOutActivity.amount.toFixed(4)} ${fromToken}</span>
                                     <span class="exchange-arrow"><i class="fas fa-arrow-right"></i></span>
@@ -2294,7 +2351,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 
                                 // 改进代币对显示
                                 tokenPairDisplay = `
-                                    <div class="token-pair">
+                                    <div class="token-pair" data-from-contract="${outActivity.contract}" data-to-contract="${inActivity.contract}">
                                         <div class="token-exchange">
                                             <span class="token-out">-${outActivity.amount.toFixed(4)} ${fromToken}</span>
                                             <span class="exchange-arrow"><i class="fas fa-arrow-right"></i></span>
@@ -2431,12 +2488,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="tx-source">${source}</div>
                         </div>
                         ${secondaryValue ? `<div class="tx-secondary">${secondaryValue}</div>` : ''}
+                        ${expenditureUsdtValueHtml}
                         <div class="tx-hash">Hash: <a href="https://bscscan.com/tx/${txGroup.hash}" target="_blank">${shortHash}</a></div>
                         ${txGroup.status === 'failed' ? '<div class="tx-failed-badge">失败</div>' : ''}
                     </div>
                 </div>
             `;
-        });
+        }
         
         html += '</div>';
         
@@ -3104,7 +3162,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * 计算所选交易对的统计信息
      */
-    function calculateSelectedPairStats() {
+    async function calculateSelectedPairStats() {
         // 获取选中的交易对
         const selectedPairs = Array.from(document.querySelectorAll('input[name="stats-pair"]:checked')).map(cb => cb.value);
         
@@ -3254,6 +3312,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     // 从交易元素中直接提取交易对信息
                     const tokenExchangeDiv = item.querySelector('.token-exchange');
+                    const tokenPairDiv = item.querySelector('.token-pair');
+
                     if (tokenExchangeDiv) {
                         const fromTokenSpan = tokenExchangeDiv.querySelector('.token-out');
                         const toTokenSpan = tokenExchangeDiv.querySelector('.token-in');
@@ -3263,6 +3323,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             let toToken = '';
                             let fromAmount = 0;
                             let toAmount = 0;
+                            let fromContract = tokenPairDiv ? tokenPairDiv.getAttribute('data-from-contract') : '';
+                            let toContract = tokenPairDiv ? tokenPairDiv.getAttribute('data-to-contract') : '';
                             
                             // 提取从代币和金额
                             const fromText = fromTokenSpan.textContent.trim();
@@ -3296,6 +3358,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                         date: txDate,
                                         fromAmount,
                                         toAmount,
+                                        fromContract,
+                                        toContract,
                                         rate: toAmount / fromAmount,
                                         timestamp: parseInt(item.getAttribute('data-timestamp') || 0)
                                     });
@@ -3341,6 +3405,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                         date: txDate,
                                         fromAmount,
                                         toAmount,
+                                        fromContract: '', // 旧方法无法获取
+                                        toContract: '', // 旧方法无法获取
                                         rate: toAmount / fromAmount,
                                         timestamp: parseInt(item.getAttribute('data-timestamp') || 0)
                                     });
@@ -3422,7 +3488,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const totalValueClass = totalUsdtValue >= 0 ? 'token-stats-positive' : 'token-stats-negative';
             html += `
                 <div class="token-stats-summary">
-                    <p>总计价值（稳定币）: <span class="${totalValueClass}">${totalUsdtValue.toFixed(2)} USDT</span></p>
+                    <p>总计价值（稳定币）: <span class="${totalValueClass}">${totalUsdtValue.toFixed(4)} USDT</span></p>
                 </div>
             `;
         }
@@ -3435,7 +3501,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {Object} pairStats - 交易对统计信息
      * @param {string} walletAddress - 钱包地址，'all'表示所有钱包
      */
-    function displayPairStats(pairStats, walletAddress = 'all') {
+    async function displayPairStats(pairStats, walletAddress = 'all') {
         // 生成标题
         const titleText = walletAddress !== 'all' ? 
             `${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)} 交易对统计` : 
@@ -3447,6 +3513,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="pair-transactions-controls">
                 <button class="btn-sort-date" data-sort="desc">日期排序 <i class="fas fa-sort-down"></i></button>
                 <button class="btn-copy-expenses">复制支出数据 <i class="fas fa-copy"></i></button>
+                <button class="btn-copy-usdt-expenses">复制支出(USDT)数据 <i class="fas fa-copy"></i></button>
             </div>
         `;
         
@@ -3498,6 +3565,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <th>交易对</th>
                         <th>日期</th>
                         <th>支出</th>
+                        <th>支出 (USDT)</th>
                         <th>收入</th>
                         <th>价格</th>
                         <th>交易哈希</th>
@@ -3507,11 +3575,22 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         
         // 添加所有交易记录
-        allTransactions.forEach(tx => {
+        for (const tx of allTransactions) {
             const txRate = tx.fromAmount > 0 ? tx.toAmount / tx.fromAmount : 0;
             const shortHash = tx.hash ? 
                 `${tx.hash.substring(0, 6)}...${tx.hash.substring(tx.hash.length - 4)}` : '';
             
+            let usdtValueHtml = '<td class="token-stats-expense-usdt">-</td>';
+            tx.usdtValue = 0; // 初始化usdtValue
+            if (tx.fromContract) {
+                const price = await getTokenPriceInUsdt(tx.fromContract);
+                if (price > 0) {
+                    const usdtValue = tx.fromAmount * price;
+                    tx.usdtValue = usdtValue; // 存储USDT价值
+                    usdtValueHtml = `<td class="token-stats-expense-usdt" style="color: #c93333;">${usdtValue.toFixed(4)}</td>`;
+                }
+            }
+
             // 为日期添加秒级显示
             const txDate = tx.date;
             // 如果日期中没有包含秒信息，尝试从timestamp中获取
@@ -3536,6 +3615,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td class="token-stats-expense">
                         <div class="number-container">${formatNumberWithCommas(tx.fromAmount.toFixed(4))} ${tx.fromToken}</div>
                     </td>
+                    ${usdtValueHtml}
                     <td class="token-stats-income">
                         <div class="number-container">${formatNumberWithCommas(tx.toAmount.toFixed(4))} ${tx.toToken}</div>
                     </td>
@@ -3543,7 +3623,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td><a href="https://bscscan.com/tx/${tx.hash}" target="_blank">${shortHash}</a></td>
                 </tr>
             `;
-        });
+        }
         
         // 计算总汇总数据
         // 按交易对分组的统计
@@ -3582,11 +3662,14 @@ document.addEventListener('DOMContentLoaded', () => {
             tokensToSum[toToken] += stats.totalToAmount;
         });
 
+        // 计算总的USDT支出
+        const grandTotalUsdt = allTransactions.reduce((sum, tx) => sum + tx.usdtValue, 0);
+        const grandTotalUsdtHtml = grandTotalUsdt > 0 ?
+            `<td class="token-stats-expense-usdt" style="color: #c93333;">${grandTotalUsdt.toFixed(4)}</td>` :
+            '<td class="token-stats-expense-usdt">-</td>';
+
         // Calculate grand total for doubled expenses once
-        let grandTotalDoubledExpenses = 0;
-        Object.values(tokensFromSum).forEach(amount => {
-            grandTotalDoubledExpenses += (amount * 2);
-        });
+        const grandTotalDoubledExpenses = grandTotalUsdt * 2;
         const formattedGrandTotalDoubledExpenses = formatNumberWithCommas(grandTotalDoubledExpenses.toFixed(4));
         
         // walletAddressAssociatedSum
@@ -3595,12 +3678,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // 添加分割线和汇总标题
         html += `
                 <tr class="summary-header">
-                    <td colspan="6" class="summary-header-text">交易对汇总信息</td>
+                    <td colspan="7" class="summary-header-text">交易对汇总信息</td>
                 </tr>
         `;
         
         // 添加每个交易对的汇总行
-        sortedPairs.forEach(([pair, stats]) => {
+        for (const [pair, stats] of sortedPairs) {
             // 计算平均价格比率
             const avgRate = stats.totalFromAmount > 0 ? 
                 stats.totalToAmount / stats.totalFromAmount : 0;
@@ -3614,6 +3697,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="token-arrow">兑</span>
                 <span class="token-to">${toDisplay}</span>
             `;
+
+            // 计算该交易对的USDT总支出
+            const totalPairUsdtValue = stats.transactions.reduce((sum, tx) => sum + tx.usdtValue, 0);
+            const totalUsdtValueHtml = totalPairUsdtValue > 0 ?
+                `<td class="token-stats-expense-usdt" style="color: #c93333;">${totalPairUsdtValue.toFixed(4)}</td>` :
+                '<td class="token-stats-expense-usdt">-</td>';
             
             html += `
                 <tr class="pair-summary-row" data-pair="${pair}">
@@ -3622,6 +3711,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td class="token-stats-expense">
                         <div class="number-container">${formatNumberWithCommas(stats.totalFromAmount.toFixed(4))} ${fromDisplay}</div>
                     </td>
+                    ${totalUsdtValueHtml}
                     <td class="token-stats-income">
                         <div class="number-container">${formatNumberWithCommas(stats.totalToAmount.toFixed(4))} ${toDisplay}</div>
                     </td>
@@ -3629,7 +3719,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>-</td>
                 </tr>
             `;
-        });
+        }
         
         // 总计汇总行
         html += `
@@ -3643,6 +3733,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ).join('')}
                     </div>
                 </td>
+                ${grandTotalUsdtHtml}
                 <td class="token-stats-income">
                     <div class="number-container">
                         ${Object.entries(tokensToSum).map(([token, amount]) => 
@@ -3743,29 +3834,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 /* 设置各列宽度 */
                 .all-transactions-table th:nth-child(1),
                 .all-transactions-table td:nth-child(1) {
-                    width: 15%; /* 交易对 */
+                    width: 14%; /* 交易对 */
                 }
                 
                 .all-transactions-table th:nth-child(2),
                 .all-transactions-table td:nth-child(2) {
-                    width: 18%; /* 日期 */
+                    width: 14%; /* 日期 */
                 }
                 
                 .all-transactions-table th:nth-child(3),
                 .all-transactions-table td:nth-child(3),
                 .all-transactions-table th:nth-child(4),
                 .all-transactions-table td:nth-child(4) {
-                    width: 20%; /* 支出和收入 */
+                    width: 15%; /* 支出和支出 (USDT) */
                 }
                 
                 .all-transactions-table th:nth-child(5),
                 .all-transactions-table td:nth-child(5) {
-                    width: 10%; /* 价格 */
+                    width: 15%; /* 收入 */
                 }
                 
                 .all-transactions-table th:nth-child(6),
                 .all-transactions-table td:nth-child(6) {
-                    width: 12%; /* 交易哈希 */
+                    width: 10%; /* 价格 */
+                }
+                
+                .all-transactions-table th:nth-child(7),
+                .all-transactions-table td:nth-child(7) {
+                    width: 20%; /* 交易哈希 */
                 }
                 
                 .all-transactions-table th {
@@ -3930,6 +4026,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('复制失败，请重试');
             });
         });
+
+        // 在显示结果后，为新的复制按钮添加事件监听器
+        setTimeout(() => {
+            const copyUsdtBtn = document.querySelector('.btn-copy-usdt-expenses');
+            if (copyUsdtBtn) {
+                copyUsdtBtn.addEventListener('click', () => {
+                    const table = document.getElementById('allTransactionsTable');
+                    if (!table) return;
+
+                    let dataToCopy = '';
+                    
+                    // 复制明细行
+                    const rows = table.querySelectorAll('tbody .transaction-row');
+                    rows.forEach(row => {
+                        const usdtCell = row.cells[3];
+                        const usdtValue = usdtCell.innerText.trim();
+                        
+                        if (usdtValue !== '-') {
+                            dataToCopy += `${usdtValue}\n`;
+                        }
+                    });
+
+                    navigator.clipboard.writeText(dataToCopy).then(() => {
+                        const originalText = copyUsdtBtn.innerHTML;
+                        copyUsdtBtn.innerHTML = '已复制!';
+                        copyUsdtBtn.disabled = true;
+                        setTimeout(() => {
+                            copyUsdtBtn.innerHTML = originalText;
+                            copyUsdtBtn.disabled = false;
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('复制失败:', err);
+                        alert('复制失败，请检查浏览器权限。');
+                    });
+                });
+            }
+        }, 0);
     }
 
     // 在页面加载完成后，将二维码元素移动到body最后，确保能显示在最上层
