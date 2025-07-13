@@ -52,6 +52,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalTitle = document.getElementById('modalTitle');
     const modalContent = document.getElementById('modalContent');
     
+    // 快捷钱包管理元素
+    const quickWalletAlias = document.getElementById('quickWalletAlias');
+    const quickWalletAddress = document.getElementById('quickWalletAddress');
+    const addQuickWalletBtn = document.getElementById('addQuickWalletBtn');
+    const quickWalletChipsRow = document.getElementById('quickWalletChipsRow');
+    const applyQuickWallets = document.getElementById('applyQuickWallets');
+    
+    // 折叠功能元素
+    const apiSettingsHeader = document.getElementById('apiSettingsHeader');
+    const apiSettingsCollapseBtn = document.getElementById('apiSettingsCollapseBtn');
+    const apiSettingsContent = document.getElementById('apiSettingsContent');
+    
+    // 时间范围折叠功能元素
+    const timeRangeHeader = document.getElementById('timeRangeHeader');
+    const timeRangeCollapseBtn = document.getElementById('timeRangeCollapseBtn');
+    const timeRangeContent = document.getElementById('timeRangeContent');
+    
     // 创建按钮容器，确保按钮并排显示
     const buttonContainer = document.createElement('div');
     buttonContainer.className = 'button-container';
@@ -4109,4 +4126,212 @@ document.addEventListener('DOMContentLoaded', () => {
         // 重新组合整数和小数部分
         return parts.join('.');
     }
+
+    // 快捷钱包管理类
+    class QuickWalletManager {
+        constructor() {
+            this.storageKey = 'quickWallets';
+            this.wallets = this.loadWallets();
+            this.selectedIds = new Set();
+            this.initEventListeners();
+            this.renderWallets();
+        }
+        loadWallets() {
+            try {
+                const stored = localStorage.getItem(this.storageKey);
+                return stored ? JSON.parse(stored) : [];
+            } catch (error) {
+                return [];
+            }
+        }
+        saveWallets() {
+            try {
+                localStorage.setItem(this.storageKey, JSON.stringify(this.wallets));
+            } catch (error) {}
+        }
+        initEventListeners() {
+            addQuickWalletBtn.addEventListener('click', () => this.addWallet());
+            quickWalletAddress.addEventListener('keypress', e => { if (e.key === 'Enter') this.addWallet(); });
+            quickWalletAlias.addEventListener('keypress', e => { if (e.key === 'Enter') this.addWallet(); });
+            applyQuickWallets.addEventListener('click', () => this.applySelectedWallets());
+        }
+        addWallet() {
+            const alias = quickWalletAlias.value.trim();
+            const address = quickWalletAddress.value.trim();
+            if (!alias) { this.showNotification('请输入钱包别名', 'error'); quickWalletAlias.focus(); return; }
+            if (!address) { this.showNotification('请输入钱包地址', 'error'); quickWalletAddress.focus(); return; }
+            if (!isValidAddress(address)) { this.showNotification('钱包地址格式无效', 'error'); quickWalletAddress.focus(); return; }
+            if (this.wallets.find(w => w.alias === alias)) { this.showNotification('该别名已存在', 'error'); quickWalletAlias.focus(); return; }
+            if (this.wallets.find(w => w.address.toLowerCase() === address.toLowerCase())) { this.showNotification('该钱包地址已存在', 'error'); quickWalletAddress.focus(); return; }
+            this.wallets.push({ id: Date.now().toString(), alias, address });
+            this.saveWallets();
+            this.renderWallets();
+            quickWalletAlias.value = '';
+            quickWalletAddress.value = '';
+            this.showNotification('快捷钱包添加成功！', 'success');
+        }
+        deleteWallet(walletId) {
+            this.wallets = this.wallets.filter(w => w.id !== walletId);
+            this.selectedIds.delete(walletId);
+            this.saveWallets();
+            this.renderWallets();
+        }
+        toggleSelect(walletId) {
+            if (this.selectedIds.has(walletId)) this.selectedIds.delete(walletId);
+            else this.selectedIds.add(walletId);
+            this.renderWallets();
+        }
+        renderWallets() {
+            // 清空chips行
+            quickWalletChipsRow.innerHTML = '';
+            if (this.wallets.length === 0) {
+                const empty = document.createElement('span');
+                empty.style.color = '#888';
+                empty.style.fontSize = '12px';
+                empty.textContent = '暂无快捷钱包';
+                quickWalletChipsRow.appendChild(empty);
+                quickWalletChipsRow.appendChild(applyQuickWallets);
+                return;
+            }
+            this.wallets.forEach(wallet => {
+                const chip = document.createElement('div');
+                chip.className = 'quick-wallet-chip' + (this.selectedIds.has(wallet.id) ? ' selected' : '');
+                chip.title = wallet.address;
+                chip.addEventListener('click', e => {
+                    if (e.target.classList.contains('chip-delete')) return;
+                    this.toggleSelect(wallet.id);
+                });
+                // 别名
+                const aliasSpan = document.createElement('span');
+                aliasSpan.className = 'chip-alias';
+                aliasSpan.textContent = wallet.alias;
+                chip.appendChild(aliasSpan);
+                // 地址
+                const addrSpan = document.createElement('span');
+                addrSpan.className = 'chip-address';
+                addrSpan.textContent = wallet.address.slice(0, 6) + '...' + wallet.address.slice(-4);
+                chip.appendChild(addrSpan);
+                // 删除按钮
+                const delBtn = document.createElement('button');
+                delBtn.className = 'chip-delete';
+                delBtn.title = '删除';
+                delBtn.innerHTML = '<i class="fas fa-times"></i>';
+                delBtn.addEventListener('click', e => { e.stopPropagation(); this.deleteWallet(wallet.id); });
+                chip.appendChild(delBtn);
+                quickWalletChipsRow.appendChild(chip);
+            });
+            quickWalletChipsRow.appendChild(applyQuickWallets);
+        }
+        applySelectedWallets() {
+            if (this.selectedIds.size === 0) {
+                this.showNotification('请先选择要应用的快捷钱包', 'error');
+                return;
+            }
+            const selectedAddresses = this.wallets.filter(w => this.selectedIds.has(w.id)).map(w => w.address);
+            walletAddressesTextarea.value = selectedAddresses.join('\n');
+            this.showNotification(`已应用 ${selectedAddresses.length} 个快捷钱包地址`, 'success');
+        }
+        showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `quick-wallet-notification ${type}`;
+            notification.textContent = message;
+            notification.style.cssText = `position: fixed; top: 20px; right: 20px; padding: 12px 20px; border-radius: 4px; color: white; font-size: 14px; z-index: 9999; opacity: 0; transform: translateX(100%); transition: all 0.3s ease; max-width: 300px; word-wrap: break-word;`;
+            if (type === 'success') notification.style.backgroundColor = '#28a745';
+            else if (type === 'error') notification.style.backgroundColor = '#dc3545';
+            else notification.style.backgroundColor = '#2196f3';
+            document.body.appendChild(notification);
+            setTimeout(() => { notification.style.opacity = '1'; notification.style.transform = 'translateX(0)'; }, 100);
+            setTimeout(() => { notification.style.opacity = '0'; notification.style.transform = 'translateX(100%)'; setTimeout(() => { if (notification.parentNode) notification.parentNode.removeChild(notification); }, 300); }, 3000);
+        }
+    }
+    // 初始化快捷钱包管理器
+    const quickWalletManager = new QuickWalletManager();
+    window.quickWalletManager = quickWalletManager;
+    
+    // 折叠功能管理器
+    class CollapsibleManager {
+        constructor() {
+            this.initApiSettingsCollapse();
+            this.initTimeRangeCollapse();
+        }
+        
+        // 初始化API设置折叠功能
+        initApiSettingsCollapse() {
+            // 设置默认折叠状态
+            apiSettingsContent.classList.add('collapsed');
+            
+            // 点击头部或按钮都可以切换折叠状态
+            apiSettingsHeader.addEventListener('click', () => {
+                this.toggleApiSettings();
+            });
+            
+            // 防止按钮点击事件冒泡
+            apiSettingsCollapseBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleApiSettings();
+            });
+        }
+        
+        // 切换API设置的折叠状态
+        toggleApiSettings() {
+            const isCollapsed = apiSettingsContent.classList.contains('collapsed');
+            
+            if (isCollapsed) {
+                // 展开
+                apiSettingsContent.classList.remove('collapsed');
+                apiSettingsCollapseBtn.classList.add('expanded');
+                
+                // 为了兼容性，添加类到父元素
+                apiSettingsContent.parentElement.classList.remove('collapsed');
+            } else {
+                // 折叠
+                apiSettingsContent.classList.add('collapsed');
+                apiSettingsCollapseBtn.classList.remove('expanded');
+                
+                // 为了兼容性，添加类到父元素
+                apiSettingsContent.parentElement.classList.add('collapsed');
+            }
+        }
+        
+        // 初始化时间范围折叠功能
+        initTimeRangeCollapse() {
+            // 设置默认折叠状态
+            timeRangeContent.classList.add('collapsed');
+            
+            // 点击头部或按钮都可以切换折叠状态
+            timeRangeHeader.addEventListener('click', () => {
+                this.toggleTimeRange();
+            });
+            
+            // 防止按钮点击事件冒泡
+            timeRangeCollapseBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleTimeRange();
+            });
+        }
+        
+        // 切换时间范围的折叠状态
+        toggleTimeRange() {
+            const isCollapsed = timeRangeContent.classList.contains('collapsed');
+            
+            if (isCollapsed) {
+                // 展开
+                timeRangeContent.classList.remove('collapsed');
+                timeRangeCollapseBtn.classList.add('expanded');
+                
+                // 为了兼容性，添加类到父元素
+                timeRangeContent.parentElement.classList.remove('collapsed');
+            } else {
+                // 折叠
+                timeRangeContent.classList.add('collapsed');
+                timeRangeCollapseBtn.classList.remove('expanded');
+                
+                // 为了兼容性，添加类到父元素
+                timeRangeContent.parentElement.classList.add('collapsed');
+            }
+        }
+    }
+    
+    // 初始化折叠功能管理器
+    const collapsibleManager = new CollapsibleManager();
 }); 

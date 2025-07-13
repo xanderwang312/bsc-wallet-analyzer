@@ -30,14 +30,50 @@
         <main>
             <section class="input-section">
                 <div class="card">
-                    <h2>API设置</h2>
-                    <div class="form-group">
-                        <label for="bscScanApiKey">BscScan API密钥:</label>
-                        <input type="password" id="bscScanApiKey" placeholder="输入您的BscScan API密钥">
-                        <small>在 <a href="https://bscscan.com/myapikey" target="_blank">bscscan.com/myapikey</a> 获取密钥</small>
-                        <div class="api-key-tips">
-                            <p><i class="fas fa-info-circle"></i> 免费API有请求限制(5次/秒)，请自行获取API密钥</p>
-                            <p><i class="fas fa-save"></i> 首次保存后将自动存储在本地，无需重复输入</p>
+                    <div class="card-header collapsible" id="apiSettingsHeader">
+                        <h2>API设置</h2>
+                        <button class="collapse-btn" id="apiSettingsCollapseBtn">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="card-content collapsed" id="apiSettingsContent">
+                        <div class="form-group">
+                            <label for="bscScanApiKey">BscScan API密钥:</label>
+                            <input type="password" id="bscScanApiKey" placeholder="输入您的BscScan API密钥">
+                            <small>在 <a href="https://bscscan.com/myapikey" target="_blank">bscscan.com/myapikey</a> 获取密钥</small>
+                            <div class="api-key-tips">
+                                <p><i class="fas fa-info-circle"></i> 免费API有请求限制(5次/秒)，请自行获取API密钥</p>
+                                <p><i class="fas fa-save"></i> 首次保存后将自动存储在本地，无需重复输入</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header collapsible" id="timeRangeHeader">
+                        <h2>时间范围 (UTC+8 中国时区)</h2>
+                        <button class="collapse-btn" id="timeRangeCollapseBtn">
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="card-content collapsed" id="timeRangeContent">
+                        <div class="form-group">
+                            <div class="datetime-container">
+                                <div class="datetime-input">
+                                    <label for="startDateTime">开始时间:</label>
+                                    <input type="datetime-local" id="startDateTime" step="1">
+                                </div>
+                                <div class="datetime-input">
+                                    <label for="endDateTime">结束时间:</label>
+                                    <input type="datetime-local" id="endDateTime" step="1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="date-note">
+                            <small>注意: 结束时间不能超过当前时间，时间精确到秒 (UTC+8 北京时间)</small>
+                            <div class="default-time-note">
+                                <i class="fas fa-info-circle"></i> 默认时间范围: 如果当前时间在8:00AM之后，则选择今天8:00AM到现在；否则选择前一天8:00AM到现在
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -48,6 +84,24 @@
                     <div class="form-group">
                         <div id="">钱包地址2被交易量总金额: <span id="walletAddressAssociatedSumValue" style="color: red;">0.0000</span></div>
                     </div>
+                    
+                    <!-- 快捷钱包管理区域（紧凑版） -->
+                    <div class="quick-wallet-section compact">
+                        <div class="quick-wallet-compact-row">
+                            <input type="text" id="quickWalletAlias" class="quick-wallet-input" placeholder="别名">
+                            <input type="text" id="quickWalletAddress" class="quick-wallet-input" placeholder="钱包地址0x...">
+                            <button type="button" id="addQuickWalletBtn" class="btn btn-secondary btn-compact" title="添加">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="quick-wallet-chips-row" id="quickWalletChipsRow">
+                            <!-- 快捷钱包标签将由JS生成 -->
+                            <button type="button" id="applyQuickWallets" class="btn btn-primary btn-compact" style="margin-left:8px;">
+                                <i class="fas fa-arrow-down"></i> 应用
+                            </button>
+                        </div>
+                    </div>
+                    
                     <div class="form-group">
                         <label for="walletAddresses">输入钱包地址(每行一个):</label>
                         <textarea id="walletAddresses" rows="5" placeholder="0x8894e0a0c962cb723c1976a4421c95949be2d4e3"></textarea>
@@ -74,28 +128,6 @@
                         </div>
                         <div class="token-example" data-address="0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d">
                             <span>USDC</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2>时间范围 (UTC+8 中国时区)</h2>
-                    <div class="form-group">
-                        <div class="datetime-container">
-                            <div class="datetime-input">
-                                <label for="startDateTime">开始时间:</label>
-                                <input type="datetime-local" id="startDateTime" step="1">
-                            </div>
-                            <div class="datetime-input">
-                                <label for="endDateTime">结束时间:</label>
-                                <input type="datetime-local" id="endDateTime" step="1">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="date-note">
-                        <small>注意: 结束时间不能超过当前时间，时间精确到秒 (UTC+8 北京时间)</small>
-                        <div class="default-time-note">
-                            <i class="fas fa-info-circle"></i> 默认时间范围: 如果当前时间在8:00AM之后，则选择今天8:00AM到现在；否则选择前一天8:00AM到现在
                         </div>
                     </div>
                 </div>

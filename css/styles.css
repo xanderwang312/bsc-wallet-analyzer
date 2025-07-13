@@ -1107,3 +1107,447 @@ footer {
 .modal-open {
     overflow: hidden;
 }
+
+/* 快捷钱包管理样式 */
+.quick-wallet-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.quick-wallet-section h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.quick-wallet-form {
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    align-items: end;
+}
+
+.form-col {
+    flex: 1;
+}
+
+.form-col label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+}
+
+.form-col input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.form-col input:focus {
+    outline: none;
+    border-color: #2196f3;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.form-col-btn {
+    flex-shrink: 0;
+}
+
+.quick-wallet-list {
+    background-color: white;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+}
+
+.quick-wallet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background-color: #f1f3f5;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.quick-wallet-header h4 {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+}
+
+.quick-wallet-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.quick-wallet-items {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.quick-wallet-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    background-color: white;
+    transition: background-color 0.2s;
+}
+
+.quick-wallet-item:hover {
+    background-color: #f8f9fa;
+}
+
+.quick-wallet-item:last-child {
+    margin-bottom: 0;
+}
+
+.quick-wallet-checkbox {
+    margin-right: 10px;
+}
+
+.quick-wallet-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.quick-wallet-alias {
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+.quick-wallet-address {
+    font-size: 12px;
+    color: #666;
+    font-family: monospace;
+    word-break: break-all;
+}
+
+.quick-wallet-delete {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    transition: background-color 0.2s;
+}
+
+.quick-wallet-delete:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+.no-quick-wallets {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    margin: 20px 0;
+}
+
+.btn-text {
+    background: none;
+    border: none;
+    color: #2196f3;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.btn-text:hover {
+    background-color: rgba(33, 150, 243, 0.1);
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: 1px solid #6c757d;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-primary {
+    background-color: #2196f3;
+    color: white;
+    border: 1px solid #2196f3;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #1976d2;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .form-col-btn {
+        align-self: stretch;
+    }
+    
+    .quick-wallet-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+    
+    .quick-wallet-actions {
+        align-self: stretch;
+        justify-content: space-between;
+    }
+}
+
+/* 自定义滚动条样式 */
+.quick-wallet-items::-webkit-scrollbar {
+    width: 6px;
+}
+
+.quick-wallet-items::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.quick-wallet-items::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.quick-wallet-items::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* 折叠卡片样式 */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0;
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 12px 12px 0 0;
+}
+
+.card-header.collapsible {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.card-header.collapsible:hover {
+    background-color: #f1f3f5;
+}
+
+.card-header h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+    font-weight: 600;
+}
+
+.collapse-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    color: #666;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+}
+
+.collapse-btn:hover {
+    background-color: rgba(33, 150, 243, 0.1);
+    color: #2196f3;
+}
+
+.collapse-btn i {
+    transition: transform 0.2s ease;
+}
+
+.collapse-btn.expanded i {
+    transform: rotate(180deg);
+}
+
+.card-content {
+    max-height: 500px;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    padding: 0 20px 20px 20px;
+    background-color: white;
+    border-radius: 0 0 12px 12px;
+}
+
+.card-content.collapsed {
+    max-height: 0;
+    padding: 0 20px;
+}
+
+/* 确保折叠状态下的卡片圆角 */
+.card:has(.card-content.collapsed) {
+    border-radius: 12px;
+}
+
+.card:has(.card-content.collapsed) .card-header {
+    border-radius: 12px;
+    border-bottom: none;
+}
+
+/* 兼容性处理 - 如果浏览器不支持:has选择器 */
+@supports not selector(:has(*)) {
+    .card.collapsed {
+        border-radius: 12px;
+    }
+    
+    .card.collapsed .card-header {
+        border-radius: 12px;
+        border-bottom: none;
+    }
+}
+
+/* 紧凑型快捷钱包管理样式 */
+.quick-wallet-section.compact {
+    background: none;
+    border: none;
+    padding: 0 0 8px 0;
+    margin-bottom: 10px;
+}
+.quick-wallet-compact-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 6px;
+}
+.quick-wallet-input {
+    width: 110px;
+    padding: 4px 8px;
+    font-size: 13px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.quick-wallet-input:focus {
+    border-color: #2196f3;
+}
+.btn-compact {
+    padding: 4px 10px;
+    font-size: 13px;
+    height: 28px;
+    min-width: 28px;
+}
+.quick-wallet-chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    min-height: 32px;
+}
+.quick-wallet-chip {
+    display: flex;
+    align-items: center;
+    background: #f1f3f5;
+    border-radius: 16px;
+    padding: 2px 10px 2px 6px;
+    font-size: 13px;
+    color: #333;
+    border: 1px solid #e0e0e0;
+    cursor: pointer;
+    transition: background 0.2s, border 0.2s;
+    user-select: none;
+    position: relative;
+}
+.quick-wallet-chip.selected {
+    background: #2196f3;
+    color: #fff;
+    border: 1px solid #2196f3;
+}
+.quick-wallet-chip .chip-alias {
+    font-weight: 500;
+    margin-right: 4px;
+    max-width: 70px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.quick-wallet-chip .chip-address {
+    font-size: 11px;
+    color: #888;
+    margin-right: 4px;
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.quick-wallet-chip .chip-delete {
+    background: none;
+    border: none;
+    color: #bbb;
+    font-size: 13px;
+    margin-left: 2px;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+}
+.quick-wallet-chip .chip-delete:hover {
+    background: #f8d7da;
+    color: #c82333;
+}
+@media (max-width: 600px) {
+    .quick-wallet-compact-row {
+        flex-direction: column;
+        gap: 4px;
+        align-items: stretch;
+    }
+    .quick-wallet-input {
+        width: 100%;
+    }
+    .quick-wallet-chips-row {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+}
