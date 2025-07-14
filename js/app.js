@@ -4153,7 +4153,6 @@ document.addEventListener('DOMContentLoaded', () => {
             addQuickWalletBtn.addEventListener('click', () => this.addWallet());
             quickWalletAddress.addEventListener('keypress', e => { if (e.key === 'Enter') this.addWallet(); });
             quickWalletAlias.addEventListener('keypress', e => { if (e.key === 'Enter') this.addWallet(); });
-            applyQuickWallets.addEventListener('click', () => this.applySelectedWallets());
         }
         addWallet() {
             const alias = quickWalletAlias.value.trim();
@@ -4168,18 +4167,53 @@ document.addEventListener('DOMContentLoaded', () => {
             this.renderWallets();
             quickWalletAlias.value = '';
             quickWalletAddress.value = '';
-            this.showNotification('快捷钱包添加成功！', 'success');
+            this.showNotification('快捷钱包添加成功！点击标签可选择地址', 'success');
         }
         deleteWallet(walletId) {
-            this.wallets = this.wallets.filter(w => w.id !== walletId);
-            this.selectedIds.delete(walletId);
-            this.saveWallets();
-            this.renderWallets();
+            const wallet = this.wallets.find(w => w.id === walletId);
+            if (!wallet) return;
+            
+            // 显示确认提示
+            if (confirm(`确定要删除快捷钱包 "${wallet.alias}" 吗？\n地址: ${wallet.address}`)) {
+                const wasSelected = this.selectedIds.has(walletId);
+                this.wallets = this.wallets.filter(w => w.id !== walletId);
+                this.selectedIds.delete(walletId);
+                this.saveWallets();
+                this.renderWallets();
+                this.updateWalletInput();
+                
+                // 显示删除成功提示
+                if (wasSelected) {
+                    this.showNotification(`已删除快捷钱包 "${wallet.alias}" 并从选择中移除`, 'success');
+                } else {
+                    this.showNotification(`已删除快捷钱包 "${wallet.alias}"`, 'success');
+                }
+            }
         }
         toggleSelect(walletId) {
-            if (this.selectedIds.has(walletId)) this.selectedIds.delete(walletId);
-            else this.selectedIds.add(walletId);
+            if (this.selectedIds.has(walletId)) {
+                this.selectedIds.delete(walletId);
+            } else {
+                this.selectedIds.add(walletId);
+            }
             this.renderWallets();
+            this.updateWalletInput();
+        }
+        updateWalletInput() {
+            // 获取所有选中的钱包地址
+            const selectedAddresses = this.wallets
+                .filter(w => this.selectedIds.has(w.id))
+                .map(w => w.address);
+            
+            // 更新输入框内容
+            walletAddressesTextarea.value = selectedAddresses.join('\n');
+            
+            // 显示提示信息
+            if (selectedAddresses.length > 0) {
+                this.showNotification(`已选择 ${selectedAddresses.length} 个钱包地址`, 'success');
+            } else {
+                this.showNotification('已清空钱包地址选择', 'info');
+            }
         }
         renderWallets() {
             // 清空chips行
@@ -4190,13 +4224,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 empty.style.fontSize = '12px';
                 empty.textContent = '暂无快捷钱包';
                 quickWalletChipsRow.appendChild(empty);
-                quickWalletChipsRow.appendChild(applyQuickWallets);
                 return;
             }
             this.wallets.forEach(wallet => {
                 const chip = document.createElement('div');
-                chip.className = 'quick-wallet-chip' + (this.selectedIds.has(wallet.id) ? ' selected' : '');
-                chip.title = wallet.address;
+                const isSelected = this.selectedIds.has(wallet.id);
+                chip.className = 'quick-wallet-chip' + (isSelected ? ' selected' : '');
+                chip.title = `点击${isSelected ? '取消选择' : '选择'}钱包地址: ${wallet.address}`;
                 chip.addEventListener('click', e => {
                     if (e.target.classList.contains('chip-delete')) return;
                     this.toggleSelect(wallet.id);
@@ -4220,16 +4254,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 chip.appendChild(delBtn);
                 quickWalletChipsRow.appendChild(chip);
             });
-            quickWalletChipsRow.appendChild(applyQuickWallets);
-        }
-        applySelectedWallets() {
-            if (this.selectedIds.size === 0) {
-                this.showNotification('请先选择要应用的快捷钱包', 'error');
-                return;
-            }
-            const selectedAddresses = this.wallets.filter(w => this.selectedIds.has(w.id)).map(w => w.address);
-            walletAddressesTextarea.value = selectedAddresses.join('\n');
-            this.showNotification(`已应用 ${selectedAddresses.length} 个快捷钱包地址`, 'success');
         }
         showNotification(message, type = 'info') {
             const notification = document.createElement('div');

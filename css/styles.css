@@ -1501,6 +1501,16 @@ footer {
     color: #fff;
     border: 1px solid #2196f3;
 }
+.quick-wallet-chip.selected .chip-address {
+    color: #e3f2fd;
+}
+.quick-wallet-chip.selected .chip-delete {
+    color: #e3f2fd;
+}
+.quick-wallet-chip.selected .chip-delete:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
 .quick-wallet-chip .chip-alias {
     font-weight: 500;
     margin-right: 4px;
