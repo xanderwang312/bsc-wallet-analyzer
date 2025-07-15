@@ -16,34 +16,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>币安智能链钱包交易分析工具</title>
+    <title data-translate="title">币安智能链钱包交易分析工具</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .language-switcher {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+        
+        .lang-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 4px;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-family: inherit;
+            min-width: 50px;
+            text-align: center;
+        }
+        
+        .lang-btn:hover {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+        
+        .lang-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--secondary-color);
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(243, 186, 47, 0.3);
+        }
+
+        header {
+            position: relative;
+        }
+
+        /* 阿拉伯语文本方向 */
+        .rtl {
+            direction: rtl;
+            text-align: right;
+        }
+
+        .rtl label {
+            text-align: right;
+        }
+
+        .rtl input[type="text"], .rtl input[type="password"], .rtl textarea, .rtl select {
+            text-align: right;
+        }
+
+        .rtl .language-switcher {
+            right: auto;
+            left: 10px;
+        }
+
+        .rtl .author-row {
+            flex-direction: row-reverse;
+        }
+
+        .rtl .quick-wallet-compact-row {
+            flex-direction: row-reverse;
+        }
+
+        .rtl .datetime-container {
+            flex-direction: row-reverse;
+        }
+
+        .rtl .stats-type-selector {
+            flex-direction: row-reverse;
+        }
+
+        .rtl .button-container {
+            flex-direction: row-reverse;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Alpha BSC钱包交易分析工具</h1>
-            <p>分析币安智能链上钱包的交易数据</p>
+            <div class="language-switcher">
+                <button id="langCn" class="lang-btn active" data-lang="cn">中文</button>
+                <button id="langEn" class="lang-btn" data-lang="en">English</button>
+                <button id="langAr" class="lang-btn" data-lang="ar">العربية</button>
+            </div>
+            <h1 data-translate="title">Alpha BSC钱包交易分析工具</h1>
+            <p data-translate="subtitle">分析币安智能链上钱包的交易数据</p>
         </header>
 
         <main>
             <section class="input-section">
                 <div class="card">
                     <div class="card-header collapsible" id="apiSettingsHeader">
-                        <h2>API设置</h2>
+                        <h2 data-translate="apiSettings">API设置</h2>
                         <button class="collapse-btn" id="apiSettingsCollapseBtn">
                             <i class="fas fa-chevron-down"></i>
                         </button>
                     </div>
                     <div class="card-content collapsed" id="apiSettingsContent">
                         <div class="form-group">
-                            <label for="bscScanApiKey">BscScan API密钥:</label>
-                            <input type="password" id="bscScanApiKey" placeholder="输入您的BscScan API密钥">
-                            <small>在 <a href="https://bscscan.com/myapikey" target="_blank">bscscan.com/myapikey</a> 获取密钥</small>
+                            <label for="bscScanApiKey" data-translate="bscScanApiKey">BscScan API密钥:</label>
+                            <input type="password" id="bscScanApiKey" data-translate-placeholder="bscScanApiKeyPlaceholder" placeholder="输入您的BscScan API密钥">
+                            <small data-translate="apiKeyHelp">在 <a href="https://bscscan.com/myapikey" target="_blank">bscscan.com/myapikey</a> 获取密钥</small>
                             <div class="api-key-tips">
-                                <p><i class="fas fa-info-circle"></i> 免费API有请求限制(5次/秒)，请自行获取API密钥</p>
-                                <p><i class="fas fa-save"></i> 首次保存后将自动存储在本地，无需重复输入</p>
+                                <p><i class="fas fa-info-circle"></i> <span data-translate="apiKeyTip1">免费API有请求限制(5次/秒)，请自行获取API密钥</span></p>
+                                <p><i class="fas fa-save"></i> <span data-translate="apiKeyTip2">首次保存后将自动存储在本地，无需重复输入</span></p>
                             </div>
                         </div>
                     </div>
@@ -51,7 +143,7 @@
 
                 <div class="card">
                     <div class="card-header collapsible" id="timeRangeHeader">
-                        <h2>时间范围 (UTC+8 中国时区)</h2>
+                        <h2 data-translate="timeRange">时间范围 (UTC+8 中国时区)</h2>
                         <button class="collapse-btn" id="timeRangeCollapseBtn">
                             <i class="fas fa-chevron-down"></i>
                         </button>
@@ -60,37 +152,37 @@
                         <div class="form-group">
                             <div class="datetime-container">
                                 <div class="datetime-input">
-                                    <label for="startDateTime">开始时间:</label>
+                                    <label for="startDateTime" data-translate="startTime">开始时间:</label>
                                     <input type="datetime-local" id="startDateTime" step="1">
                                 </div>
                                 <div class="datetime-input">
-                                    <label for="endDateTime">结束时间:</label>
+                                    <label for="endDateTime" data-translate="endTime">结束时间:</label>
                                     <input type="datetime-local" id="endDateTime" step="1">
                                 </div>
                             </div>
                         </div>
                         <div class="date-note">
-                            <small>注意: 结束时间不能超过当前时间，时间精确到秒 (UTC+8 北京时间)</small>
+                            <small data-translate="dateNote">注意: 结束时间不能超过当前时间，时间精确到秒 (UTC+8 北京时间)</small>
                             <div class="default-time-note">
-                                <i class="fas fa-info-circle"></i> 默认时间范围: 如果当前时间在8:00AM之后，则选择今天8:00AM到现在；否则选择前一天8:00AM到现在
+                                <i class="fas fa-info-circle"></i> <span data-translate="defaultTimeNote">默认时间范围: 如果当前时间在8:00AM之后，则选择今天8:00AM到现在；否则选择前一天8:00AM到现在</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="card">
-                    <h2>钱包地址</h2>
+                    <h2 data-translate="walletAddress">钱包地址</h2>
                     <!-- 美化钱包地址关联代币总金额 -->
                     <div class="form-group">
-                        <div id="">钱包地址2被交易量总金额: <span id="walletAddressAssociatedSumValue" style="color: red;">0.0000</span></div>
+                        <div id=""><span data-translate="walletAddressAssociatedSum">钱包地址2被交易量总金额</span>: <span id="walletAddressAssociatedSumValue" style="color: red;">0.0000</span></div>
                     </div>
                     
                     <!-- 快捷钱包管理区域（紧凑版） -->
                     <div class="quick-wallet-section compact">
                         <div class="quick-wallet-compact-row">
-                            <input type="text" id="quickWalletAlias" class="quick-wallet-input" placeholder="别名">
-                            <input type="text" id="quickWalletAddress" class="quick-wallet-input" placeholder="钱包地址0x...">
-                            <button type="button" id="addQuickWalletBtn" class="btn btn-secondary btn-compact" title="添加">
+                            <input type="text" id="quickWalletAlias" class="quick-wallet-input" data-translate-placeholder="aliasPlaceholder" placeholder="别名">
+                            <input type="text" id="quickWalletAddress" class="quick-wallet-input" data-translate-placeholder="walletAddressPlaceholder" placeholder="钱包地址0x...">
+                            <button type="button" id="addQuickWalletBtn" class="btn btn-secondary btn-compact" data-translate-title="add" title="添加">
                                 <i class="fas fa-plus"></i>
                             </button>
                         </div>
@@ -100,17 +192,17 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="walletAddresses">输入钱包地址(每行一个):</label>
-                        <textarea id="walletAddresses" rows="5" placeholder="0x8894e0a0c962cb723c1976a4421c95949be2d4e3"></textarea>
+                        <label for="walletAddresses" data-translate="inputWalletAddresses">输入钱包地址(每行一个):</label>
+                        <textarea id="walletAddresses" rows="5" data-translate-placeholder="walletAddressExample" placeholder="0x8894e0a0c962cb723c1976a4421c95949be2d4e3"></textarea>
                     </div>
                 </div>
 
                 <div class="card">
-                    <h2>代币地址</h2>
+                    <h2 data-translate="tokenAddress">代币地址</h2>
                     <div class="form-group">
-                        <label for="tokenAddresses">输入代币合约地址(每行一个):</label>
-                        <textarea id="tokenAddresses" rows="5" placeholder="0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56"></textarea>
-                        <small>留空则分析所有代币</small>
+                        <label for="tokenAddresses" data-translate="inputTokenAddresses">输入代币合约地址(每行一个):</label>
+                        <textarea id="tokenAddresses" rows="5" data-translate-placeholder="tokenAddressExample" placeholder="0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56"></textarea>
+                        <small data-translate="tokenAddressNote">留空则分析所有代币</small>
                     </div>
 
                     <div class="token-examples">
@@ -131,46 +223,46 @@
 
                 <div class="card">
                     <button id="analyzeButton" class="btn-primary">
-                        <i class="fas fa-search"></i> 分析钱包
+                        <i class="fas fa-search"></i> <span data-translate="analyzeWallet">分析钱包</span>
                     </button>
                 </div>
                 
                 <!-- 代币统计区域 -->
                 <div class="card" id="tokenStatsCard" style="display: none;">
-                    <h2>代币交易统计</h2>
+                    <h2 data-translate="tokenStats">代币交易统计</h2>
                     <div class="form-group">
-                        <label>选择钱包地址:</label>
+                        <label data-translate="selectWalletAddress">选择钱包地址:</label>
                         <div class="wallet-selector">
                             <select id="walletSelector" class="wallet-select">
-                                <option value="all">所有钱包合并统计</option>
+                                <option value="all" data-translate="allWallets">所有钱包合并统计</option>
                                 <!-- 钱包选项将由JavaScript动态生成 -->
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>统计类型:</label>
+                        <label data-translate="statsType">统计类型:</label>
                         <div class="stats-type-selector">
-                            <button id="pairStatsBtn" class="stats-type-btn">交易对统计</button>
-                            <button id="tokenStatsBtn" class="stats-type-btn stats-type-active">代币统计</button>
+                            <button id="pairStatsBtn" class="stats-type-btn" data-translate="pairStats">交易对统计</button>
+                            <button id="tokenStatsBtn" class="stats-type-btn stats-type-active" data-translate="tokenStatsBtn">代币统计</button>
                         </div>
                     </div>
                     
                     <!-- 代币统计选择区域 -->
                     <div id="tokenStatsSection" class="stats-section">
                         <div class="form-group">
-                            <label>选择要统计的代币:</label>
+                            <label data-translate="selectTokensToCalculate">选择要统计的代币:</label>
                             <div id="tokenStatsSelectionContainer" class="token-stats-selection">
                                 <!-- 代币选择将由JavaScript动态生成 -->
                             </div>
                             <div class="token-stats-actions">
                                 <button id="calculateTokenStatsBtn" class="btn btn-secondary">
-                                    <i class="fas fa-calculator"></i> 计算所选代币统计
+                                    <i class="fas fa-calculator"></i> <span data-translate="calculateSelectedTokenStats">计算所选代币统计</span>
                                 </button>
                                 <button id="selectAllTokensBtn" class="btn btn-text">
-                                    <i class="fas fa-check-square"></i> 全选
+                                    <i class="fas fa-check-square"></i> <span data-translate="selectAll">全选</span>
                                 </button>
                                 <button id="unselectAllTokensBtn" class="btn btn-text">
-                                    <i class="fas fa-square"></i> 取消全选
+                                    <i class="fas fa-square"></i> <span data-translate="unselectAll">取消全选</span>
                                 </button>
                             </div>
                         </div>
@@ -179,26 +271,26 @@
                     <!-- 交易对统计选择区域 -->
                     <div id="pairStatsSection" class="stats-section" style="display: none;">
                         <div class="form-group">
-                            <label>选择要统计的代币兑换对:</label>
+                            <label data-translate="selectPairsToCalculate">选择要统计的代币兑换对:</label>
                             <div id="pairStatsSelectionContainer" class="token-stats-selection">
                                 <!-- 交易对选择将由JavaScript动态生成 -->
                             </div>
                             <div class="token-stats-actions">
                                 <button id="calculatePairStatsBtn" class="btn btn-secondary">
-                                    <i class="fas fa-calculator"></i> 计算选定的兑换统计
+                                    <i class="fas fa-calculator"></i> <span data-translate="calculateSelectedPairStats">计算选定的兑换统计</span>
                                 </button>
                                 <button id="selectAllPairsBtn" class="btn btn-text">
-                                    <i class="fas fa-check-square"></i> 全选
+                                    <i class="fas fa-check-square"></i> <span data-translate="selectAll">全选</span>
                                 </button>
                                 <button id="unselectAllPairsBtn" class="btn btn-text">
-                                    <i class="fas fa-square"></i> 取消全选
+                                    <i class="fas fa-square"></i> <span data-translate="unselectAll">取消全选</span>
                                 </button>
                             </div>
                         </div>
                     </div>
                     
                     <div id="tokenStatsResultContainer" class="token-stats-results">
-                        <p class="no-stats">请先选择要统计的内容并点击计算按钮</p>
+                        <p class="no-stats" data-translate="pleaseSelectContent">请先选择要统计的内容并点击计算按钮</p>
                     </div>
                 </div>
                 
@@ -206,16 +298,16 @@
                 <div id="errorContainer" class="card error-container hidden">
                     <div class="error-header">
                         <i class="fas fa-exclamation-triangle"></i>
-                        <h3>错误信息</h3>
+                        <h3 data-translate="errorInfo">错误信息</h3>
                     </div>
                     <div id="errorMessage"></div>
                     <div class="error-tips">
-                        <p><strong>常见问题解决方案:</strong></p>
+                        <p><strong data-translate="solutionTips">常见问题解决方案:</strong></p>
                         <ul>
-                            <li>确保您的API密钥正确且有效</li>
-                            <li>检查钱包地址格式是否正确</li>
-                            <li>确保所选时间不在未来</li>
-                            <li>如遇到API限制错误，请稍后再试</li>
+                            <li data-translate="tip1">确保您的API密钥正确且有效</li>
+                            <li data-translate="tip2">检查钱包地址格式是否正确</li>
+                            <li data-translate="tip3">确保所选时间不在未来</li>
+                            <li data-translate="tip4">如遇到API限制错误，请稍后再试</li>
                         </ul>
                     </div>
                 </div>
@@ -223,20 +315,20 @@
 
             <section class="results-section">
                 <div class="card">
-                    <h2>分析结果</h2>
+                    <h2 data-translate="analysisResults">分析结果</h2>
                     <div id="loadingIndicator" class="loading-indicator hidden">
                         <div class="spinner"></div>
-                        <p>正在分析钱包数据...</p>
+                        <p data-translate="analyzing">正在分析钱包数据...</p>
                     </div>
                     <div id="resultsContainer">
-                        <p class="initial-message">分析结果将显示在这里</p>
+                        <p class="initial-message" data-translate="resultsPlaceholder">分析结果将显示在这里</p>
                     </div>
                 </div>
             </section>
         </main>
 
         <footer>
-            <p>&copy; 2023 Alpha BSC钱包交易分析工具 | <a href="https://github.com/xanderwang312/bsc-wallet-analyzer" target="_blank">GitHub</a></p>
+            <p>&copy; 2023 <span data-translate="footerTitle">Alpha BSC钱包交易分析工具</span> | <a href="https://github.com/xanderwang312/bsc-wallet-analyzer" target="_blank">GitHub</a></p>
         </footer>
     </div>
 
@@ -245,12 +337,12 @@
         <div id="modalContainer" class="modal-container">
             <div class="modal-header">
                 <span id="modalClose" class="modal-close">&times;</span>
-                <h3 id="modalTitle">提示</h3>
+                <h3 id="modalTitle" data-translate="tip">提示</h3>
             </div>
             <div id="modalContent" class="modal-content">
                 <div class="modal-message">
                     <i class="fas fa-spinner fa-spin"></i>
-                    <p>开始查询，请稍候...</p>
+                    <p data-translate="startQuery">开始查询，请稍候...</p>
                 </div>
             </div>
         </div>

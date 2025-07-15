@@ -12,6 +12,420 @@
  * 个人使用和学习目的可免费使用。
  */
 
+// 多语言数据结构
+const translations = {
+    cn: {
+        title: "Alpha BSC钱包交易分析工具",
+        subtitle: "分析币安智能链上钱包的交易数据",
+        apiSettings: "API设置",
+        bscScanApiKey: "BscScan API密钥:",
+        bscScanApiKeyPlaceholder: "输入您的BscScan API密钥",
+        apiKeyHelp: "在 bscscan.com/myapikey 获取密钥",
+        apiKeyTip1: "免费API有请求限制(5次/秒)，请自行获取API密钥",
+        apiKeyTip2: "首次保存后将自动存储在本地，无需重复输入",
+        timeRange: "时间范围 (UTC+8 中国时区)",
+        startTime: "开始时间:",
+        endTime: "结束时间:",
+        dateNote: "注意: 结束时间不能超过当前时间，时间精确到秒 (UTC+8 北京时间)",
+        defaultTimeNote: "默认时间范围: 如果当前时间在8:00AM之后，则选择今天8:00AM到现在；否则选择前一天8:00AM到现在",
+        walletAddress: "钱包地址",
+        walletAddressAssociatedSum: "钱包地址2被交易量总金额",
+        aliasPlaceholder: "别名",
+        walletAddressPlaceholder: "钱包地址0x...",
+        add: "添加",
+        inputWalletAddresses: "输入钱包地址(每行一个):",
+        walletAddressExample: "0x8894e0a0c962cb723c1976a4421c95949be2d4e3",
+        tokenAddress: "代币地址",
+        inputTokenAddresses: "输入代币合约地址(每行一个):",
+        tokenAddressExample: "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+        tokenAddressNote: "留空则分析所有代币",
+        analyzeWallet: "分析钱包",
+        viewLatestTransactions: "查看最新交易",
+        tokenStats: "代币交易统计",
+        selectWalletAddress: "选择钱包地址:",
+        allWallets: "所有钱包合并统计",
+        statsType: "统计类型:",
+        pairStats: "交易对统计",
+        tokenStatsBtn: "代币统计",
+        errorInfo: "错误信息",
+        solutionTips: "常见问题解决方案:",
+        tip1: "确保您的API密钥正确且有效",
+        tip2: "检查钱包地址格式是否正确",
+        tip3: "确保所选时间不在未来",
+        tip4: "如遇到API限制错误，请稍后再试",
+        analysisResults: "分析结果",
+        analyzing: "正在分析钱包数据...",
+        resultsPlaceholder: "分析结果将显示在这里",
+        footerTitle: "Alpha BSC钱包交易分析工具",
+        tip: "提示",
+        startQuery: "开始查询，请稍候...",
+        quickWalletAliasRequired: "请输入钱包别名",
+        quickWalletAddressRequired: "请输入钱包地址",
+        quickWalletAddressInvalid: "钱包地址格式无效",
+        quickWalletAliasExists: "该别名已存在",
+        quickWalletAddressExists: "该钱包地址已存在",
+        quickWalletAddSuccess: "快捷钱包添加成功！点击标签可选择地址",
+        noQuickWallets: "暂无快捷钱包",
+        deleteWalletConfirm: "确定要删除快捷钱包",
+        walletAddress: "地址",
+        walletDeleted: "已删除快捷钱包",
+        walletDeletedAndRemoved: "已删除快捷钱包并从选择中移除",
+        walletsSelected: "已选择",
+        walletsSelectedCount: "个钱包地址",
+        walletsCleared: "已清空钱包地址选择",
+        clickToSelect: "点击选择钱包地址",
+        clickToUnselect: "点击取消选择钱包地址",
+        delete: "删除",
+        selectTokensToCalculate: "选择要统计的代币:",
+        calculateSelectedTokenStats: "计算所选代币统计",
+        selectAll: "全选",
+        unselectAll: "取消全选",
+        selectPairsToCalculate: "选择要统计的代币兑换对:",
+        calculateSelectedPairStats: "计算选定的兑换统计",
+        pleaseSelectContent: "请先选择要统计的内容并点击计算按钮",
+        selectAtLeastOneToken: "请至少选择一个代币进行统计",
+        selectAtLeastOnePair: "请至少选择一个交易对进行统计",
+        analyzeWalletFirst: "请先分析钱包交易",
+        calculatingPairStats: "正在计算交易对统计...",
+        calculationError: "计算统计时出错",
+        token: "代币",
+        income: "收入",
+        expense: "支出",
+        netChange: "净变化",
+        transactionCount: "交易次数",
+        tradingPair: "交易对",
+        date: "日期",
+        price: "价格",
+        transactionHash: "交易哈希",
+        expenseUsdt: "支出 (USDT)",
+        dateSort: "日期排序",
+        copyExpenseData: "复制支出数据",
+        copyUsdtExpenseData: "复制支出(USDT)数据",
+        tokenTransactionStats: "代币交易统计",
+        pairTransactionStats: "交易对统计",
+        allWalletTokenStats: "所有钱包代币交易统计",
+        allWalletPairStats: "所有钱包交易对统计",
+        pairSummaryInfo: "交易对汇总信息",
+        totalTradingPairs: "总计交易对",
+        totalTransactions: "总交易次数",
+        transactionCountLabel: "交易次数",
+        exchange: "兑",
+        exchangeFilter: "兑换币种",
+        exchangedFilter: "被兑换币种",
+        selectPairsPrompt: "请勾选您想要统计的代币兑换对（可多选）",
+        expenditureValue: "支出价值"
+    },
+    en: {
+        title: "Alpha BSC Wallet Transaction Analysis Tool",
+        subtitle: "Analyze wallet transaction data on Binance Smart Chain",
+        apiSettings: "API Settings",
+        bscScanApiKey: "BscScan API Key:",
+        bscScanApiKeyPlaceholder: "Enter your BscScan API key",
+        apiKeyHelp: "Get your key at bscscan.com/myapikey",
+        apiKeyTip1: "Free API has rate limits (5 requests/sec), please get your own API key",
+        apiKeyTip2: "Will be automatically stored locally after first save, no need to re-enter",
+        timeRange: "Time Range (UTC+8 China Time Zone)",
+        startTime: "Start Time:",
+        endTime: "End Time:",
+        dateNote: "Note: End time cannot exceed current time, time accurate to seconds (UTC+8 Beijing Time)",
+        defaultTimeNote: "Default time range: If current time is after 8:00AM, select today 8:00AM to now; otherwise select previous day 8:00AM to now",
+        walletAddress: "Wallet Address",
+        walletAddressAssociatedSum: "Wallet Address 2x Transaction Total Amount",
+        aliasPlaceholder: "Alias",
+        walletAddressPlaceholder: "Wallet Address 0x...",
+        add: "Add",
+        inputWalletAddresses: "Enter wallet addresses (one per line):",
+        walletAddressExample: "0x8894e0a0c962cb723c1976a4421c95949be2d4e3",
+        tokenAddress: "Token Address",
+        inputTokenAddresses: "Enter token contract addresses (one per line):",
+        tokenAddressExample: "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+        tokenAddressNote: "Leave empty to analyze all tokens",
+        analyzeWallet: "Analyze Wallet",
+        viewLatestTransactions: "View Latest Transactions",
+        tokenStats: "Token Transaction Statistics",
+        selectWalletAddress: "Select Wallet Address:",
+        allWallets: "All Wallets Combined Statistics",
+        statsType: "Statistics Type:",
+        pairStats: "Trading Pair Statistics",
+        tokenStatsBtn: "Token Statistics",
+        errorInfo: "Error Information",
+        solutionTips: "Common Problem Solutions:",
+        tip1: "Ensure your API key is correct and valid",
+        tip2: "Check wallet address format is correct",
+        tip3: "Ensure selected time is not in the future",
+        tip4: "If you encounter API rate limit errors, please try again later",
+        analysisResults: "Analysis Results",
+        analyzing: "Analyzing wallet data...",
+        resultsPlaceholder: "Analysis results will be displayed here",
+        footerTitle: "Alpha BSC Wallet Transaction Analysis Tool",
+        tip: "Tip",
+        startQuery: "Starting query, please wait...",
+        quickWalletAliasRequired: "Please enter wallet alias",
+        quickWalletAddressRequired: "Please enter wallet address",
+        quickWalletAddressInvalid: "Invalid wallet address format",
+        quickWalletAliasExists: "This alias already exists",
+        quickWalletAddressExists: "This wallet address already exists",
+        quickWalletAddSuccess: "Quick wallet added successfully! Click tags to select addresses",
+        noQuickWallets: "No quick wallets",
+        deleteWalletConfirm: "Are you sure you want to delete quick wallet",
+        walletAddress: "Address",
+        walletDeleted: "Deleted quick wallet",
+        walletDeletedAndRemoved: "Deleted quick wallet and removed from selection",
+        walletsSelected: "Selected",
+        walletsSelectedCount: "wallet addresses",
+        walletsCleared: "Cleared wallet address selection",
+        clickToSelect: "Click to select wallet address",
+        clickToUnselect: "Click to unselect wallet address",
+        delete: "Delete",
+        selectTokensToCalculate: "Select tokens to calculate:",
+        calculateSelectedTokenStats: "Calculate Selected Token Statistics",
+        selectAll: "Select All",
+        unselectAll: "Unselect All",
+        selectPairsToCalculate: "Select trading pairs to calculate:",
+        calculateSelectedPairStats: "Calculate Selected Pair Statistics",
+        pleaseSelectContent: "Please select content to calculate and click the calculate button",
+        selectAtLeastOneToken: "Please select at least one token for statistics",
+        selectAtLeastOnePair: "Please select at least one trading pair for statistics",
+        analyzeWalletFirst: "Please analyze wallet transactions first",
+        calculatingPairStats: "Calculating trading pair statistics...",
+        calculationError: "Error calculating statistics",
+        token: "Token",
+        income: "Income",
+        expense: "Expense",
+        netChange: "Net Change",
+        transactionCount: "Transaction Count",
+        tradingPair: "Trading Pair",
+        date: "Date",
+        price: "Price",
+        transactionHash: "Transaction Hash",
+        expenseUsdt: "Expense (USDT)",
+        dateSort: "Date Sort",
+        copyExpenseData: "Copy Expense Data",
+        copyUsdtExpenseData: "Copy USDT Expense Data",
+        tokenTransactionStats: "Token Transaction Statistics",
+        pairTransactionStats: "Trading Pair Statistics",
+        allWalletTokenStats: "All Wallet Token Statistics",
+        allWalletPairStats: "All Wallet Trading Pair Statistics",
+        pairSummaryInfo: "Trading Pair Summary Information",
+        totalTradingPairs: "Total Trading Pairs",
+        totalTransactions: "Total Transactions",
+        transactionCountLabel: "Transaction Count",
+        exchange: "to",
+        exchangeFilter: "Exchange Currency",
+        exchangedFilter: "Exchanged Currency",
+        selectPairsPrompt: "Please select the trading pairs you want to calculate (multiple selection allowed)",
+        expenditureValue: "Expenditure Value"
+    },
+    ar: {
+        title: "أداة تحليل معاملات محفظة BSC الأساسية",
+        subtitle: "تحليل بيانات معاملات المحفظة على بينانس الذكية",
+        apiSettings: "إعدادات API",
+        bscScanApiKey: "مفتاح BscScan API:",
+        bscScanApiKeyPlaceholder: "أدخل مفتاح BscScan API الخاص بك",
+        apiKeyHelp: "احصل على مفتاحك من bscscan.com/myapikey",
+        apiKeyTip1: "واجهة برمجة التطبيقات المجانية لديها حدود للطلبات (5 طلبات/ثانية)، يرجى الحصول على مفتاح API الخاص بك",
+        apiKeyTip2: "سيتم تخزينه تلقائياً محلياً بعد الحفظ الأول، لا حاجة لإعادة الإدخال",
+        timeRange: "النطاق الزمني (UTC+8 المنطقة الزمنية الصينية)",
+        startTime: "وقت البداية:",
+        endTime: "وقت النهاية:",
+        dateNote: "ملاحظة: وقت النهاية لا يمكن أن يتجاوز الوقت الحالي، الوقت دقيق إلى الثواني (UTC+8 توقيت بكين)",
+        defaultTimeNote: "النطاق الزمني الافتراضي: إذا كان الوقت الحالي بعد الساعة 8:00 صباحاً، اختر اليوم 8:00 صباحاً إلى الآن؛ وإلا اختر اليوم السابق 8:00 صباحاً إلى الآن",
+        walletAddress: "عنوان المحفظة",
+        walletAddressAssociatedSum: "المبلغ الإجمالي لمعاملات عنوان المحفظة 2x",
+        aliasPlaceholder: "الاسم المستعار",
+        walletAddressPlaceholder: "عنوان المحفظة 0x...",
+        add: "إضافة",
+        inputWalletAddresses: "أدخل عناوين المحافظ (واحد في كل سطر):",
+        walletAddressExample: "0x8894e0a0c962cb723c1976a4421c95949be2d4e3",
+        tokenAddress: "عنوان الرمز المميز",
+        inputTokenAddresses: "أدخل عناوين عقود الرموز المميزة (واحد في كل سطر):",
+        tokenAddressExample: "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+        tokenAddressNote: "اتركه فارغاً لتحليل جميع الرموز المميزة",
+        analyzeWallet: "تحليل المحفظة",
+        viewLatestTransactions: "عرض أحدث المعاملات",
+        tokenStats: "إحصائيات معاملات الرمز المميز",
+        selectWalletAddress: "اختر عنوان المحفظة:",
+        allWallets: "إحصائيات مجمعة لجميع المحافظ",
+        statsType: "نوع الإحصائيات:",
+        pairStats: "إحصائيات أزواج التداول",
+        tokenStatsBtn: "إحصائيات الرمز المميز",
+        errorInfo: "معلومات الخطأ",
+        solutionTips: "حلول المشاكل الشائعة:",
+        tip1: "تأكد من أن مفتاح API الخاص بك صحيح وصالح",
+        tip2: "تحقق من صحة تنسيق عنوان المحفظة",
+        tip3: "تأكد من أن الوقت المحدد ليس في المستقبل",
+        tip4: "إذا واجهت أخطاء حد معدل API، يرجى المحاولة مرة أخرى لاحقاً",
+        analysisResults: "نتائج التحليل",
+        analyzing: "جارٍ تحليل بيانات المحفظة...",
+        resultsPlaceholder: "ستظهر نتائج التحليل هنا",
+        footerTitle: "أداة تحليل معاملات محفظة BSC الأساسية",
+        tip: "نصيحة",
+        startQuery: "بدء الاستعلام، يرجى الانتظار...",
+        quickWalletAliasRequired: "يرجى إدخال اسم مستعار للمحفظة",
+        quickWalletAddressRequired: "يرجى إدخال عنوان المحفظة",
+        quickWalletAddressInvalid: "تنسيق عنوان المحفظة غير صحيح",
+        quickWalletAliasExists: "هذا الاسم المستعار موجود بالفعل",
+        quickWalletAddressExists: "عنوان المحفظة هذا موجود بالفعل",
+        quickWalletAddSuccess: "تمت إضافة المحفظة السريعة بنجاح! انقر على العلامات لتحديد العناوين",
+        noQuickWallets: "لا توجد محافظ سريعة",
+        deleteWalletConfirm: "هل أنت متأكد أنك تريد حذف المحفظة السريعة",
+        walletAddress: "العنوان",
+        walletDeleted: "تم حذف المحفظة السريعة",
+        walletDeletedAndRemoved: "تم حذف المحفظة السريعة وإزالتها من التحديد",
+        walletsSelected: "تم تحديد",
+        walletsSelectedCount: "عناوين محافظ",
+        walletsCleared: "تم مسح تحديد عناوين المحافظ",
+        clickToSelect: "انقر لتحديد عنوان المحفظة",
+        clickToUnselect: "انقر لإلغاء تحديد عنوان المحفظة",
+        delete: "حذف",
+        selectTokensToCalculate: "اختر الرموز المميزة للحساب:",
+        calculateSelectedTokenStats: "حساب إحصائيات الرموز المميزة المحددة",
+        selectAll: "تحديد الكل",
+        unselectAll: "إلغاء تحديد الكل",
+        selectPairsToCalculate: "اختر أزواج التداول للحساب:",
+        calculateSelectedPairStats: "حساب إحصائيات الأزواج المحددة",
+        pleaseSelectContent: "يرجى اختيار المحتوى للحساب والنقر على زر الحساب",
+        selectAtLeastOneToken: "يرجى اختيار رمز مميز واحد على الأقل للإحصائيات",
+        selectAtLeastOnePair: "يرجى اختيار زوج تداول واحد على الأقل للإحصائيات",
+        analyzeWalletFirst: "يرجى تحليل معاملات المحفظة أولاً",
+        calculatingPairStats: "جارٍ حساب إحصائيات أزواج التداول...",
+        calculationError: "خطأ في حساب الإحصائيات",
+        token: "الرمز المميز",
+        income: "الدخل",
+        expense: "المصروف",
+        netChange: "التغيير الصافي",
+        transactionCount: "عدد المعاملات",
+        tradingPair: "زوج التداول",
+        date: "التاريخ",
+        price: "السعر",
+        transactionHash: "رمز المعاملة",
+        expenseUsdt: "المصروف (USDT)",
+        dateSort: "ترتيب التاريخ",
+        copyExpenseData: "نسخ بيانات المصروف",
+        copyUsdtExpenseData: "نسخ بيانات مصروف USDT",
+        tokenTransactionStats: "إحصائيات معاملات الرمز المميز",
+        pairTransactionStats: "إحصائيات أزواج التداول",
+        allWalletTokenStats: "إحصائيات رموز جميع المحافظ",
+        allWalletPairStats: "إحصائيات أزواج تداول جميع المحافظ",
+        pairSummaryInfo: "معلومات ملخص أزواج التداول",
+        totalTradingPairs: "إجمالي أزواج التداول",
+        totalTransactions: "إجمالي المعاملات",
+        transactionCountLabel: "عدد المعاملات",
+        exchange: "إلى",
+        exchangeFilter: "عملة التبادل",
+        exchangedFilter: "العملة المتبادلة",
+        selectPairsPrompt: "يرجى اختيار أزواج التداول التي تريد حسابها (يُسمح بالاختيار المتعدد)",
+        expenditureValue: "قيمة المصروف"
+    }
+};
+
+// 多语言管理类
+class LanguageManager {
+    constructor() {
+        this.currentLanguage = this.loadLanguage();
+        this.init();
+    }
+
+    loadLanguage() {
+        const savedLang = localStorage.getItem('selectedLanguage');
+        return savedLang || 'cn';
+    }
+
+    saveLanguage(lang) {
+        localStorage.setItem('selectedLanguage', lang);
+    }
+
+    init() {
+        // 初始化语言按钮事件
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const lang = btn.getAttribute('data-lang');
+                this.setLanguage(lang);
+            });
+        });
+
+        // 应用当前语言
+        this.applyLanguage(this.currentLanguage);
+    }
+
+    setLanguage(lang) {
+        this.currentLanguage = lang;
+        this.saveLanguage(lang);
+        this.applyLanguage(lang);
+    }
+
+    applyLanguage(lang) {
+        // 更新按钮状态
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.getAttribute('data-lang') === lang) {
+                btn.classList.add('active');
+            }
+        });
+
+        // 设置页面方向（阿拉伯语为RTL）
+        if (lang === 'ar') {
+            document.documentElement.classList.add('rtl');
+            document.documentElement.dir = 'rtl';
+        } else {
+            document.documentElement.classList.remove('rtl');
+            document.documentElement.dir = 'ltr';
+        }
+
+        // 翻译所有文本
+        const langData = translations[lang];
+        
+        // 处理基本翻译
+        document.querySelectorAll('[data-translate]').forEach(element => {
+            const key = element.getAttribute('data-translate');
+            if (langData[key]) {
+                element.textContent = langData[key];
+            }
+        });
+
+        // 处理占位符翻译
+        document.querySelectorAll('[data-translate-placeholder]').forEach(element => {
+            const key = element.getAttribute('data-translate-placeholder');
+            if (langData[key]) {
+                element.setAttribute('placeholder', langData[key]);
+            }
+        });
+
+        // 处理标题翻译
+        document.querySelectorAll('[data-translate-title]').forEach(element => {
+            const key = element.getAttribute('data-translate-title');
+            if (langData[key]) {
+                element.setAttribute('title', langData[key]);
+            }
+        });
+
+        // 更新文档标题
+        document.title = langData.title;
+
+        // 更新按钮内容
+        const analyzeButton = document.getElementById('analyzeButton');
+        const latestButton = document.getElementById('latestButton');
+        
+        if (analyzeButton) {
+            analyzeButton.innerHTML = `<i class="fas fa-search"></i> <span data-translate="analyzeWallet">${langData.analyzeWallet}</span>`;
+        }
+        
+        if (latestButton) {
+            latestButton.innerHTML = `<i class="fas fa-clock"></i> <span data-translate="viewLatestTransactions">${langData.viewLatestTransactions}</span>`;
+        }
+
+        // 更新快捷钱包显示
+        if (window.quickWalletManager) {
+            window.quickWalletManager.renderWallets();
+        }
+    }
+
+    // 获取当前语言的翻译文本
+    getText(key) {
+        return translations[this.currentLanguage][key] || key;
+    }
+}
+
 // 在文件顶部添加千分位格式化函数
 /**
  * 对数字添加千分位分隔符
@@ -32,7 +446,13 @@ function formatNumberWithCommas(num) {
     return parts.join('.');
 }
 
+// 全局语言管理器实例
+let languageManager;
+
 document.addEventListener('DOMContentLoaded', () => {
+    // 初始化语言管理器
+    languageManager = new LanguageManager();
+    
     // DOM elements
     const bscScanApiKeyInput = document.getElementById('bscScanApiKey');
     const walletAddressesTextarea = document.getElementById('walletAddresses');
@@ -84,7 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const latestButton = document.createElement('button');
     latestButton.id = 'latestButton';
     latestButton.className = 'btn btn-primary'; // 使用与原按钮相同的样式
-    latestButton.textContent = '查看最新交易';
+    latestButton.innerHTML = `<i class="fas fa-clock"></i> <span data-translate="viewLatestTransactions">${languageManager.getText('viewLatestTransactions')}</span>`;
     buttonContainer.appendChild(latestButton);
     
     // 添加按钮说明文本
@@ -134,7 +554,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 显示模态弹窗
     function showModal(title, content) {
-        if (modalTitle) modalTitle.textContent = title || '提示';
+        if (modalTitle) modalTitle.textContent = title || languageManager.getText('tip');
         if (content && modalContent) {
             modalContent.innerHTML = content;
         }
@@ -699,7 +1119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 更新分析按钮文本
     if (analyzeButton) {
-        analyzeButton.textContent = '查看交易记录';
+        analyzeButton.innerHTML = `<i class="fas fa-search"></i> <span data-translate="analyzeWallet">${languageManager.getText('analyzeWallet')}</span>`;
     }
     
     // 创建币种筛选区域
@@ -714,11 +1134,11 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="filter-groups">
                 <div class="filter-group">
-                    <div class="filter-title">兑换币种</div>
+                    <div class="filter-title">${languageManager.getText('exchangeFilter')}</div>
                     <div id="fromTokens" class="token-checkboxes"></div>
                 </div>
                 <div class="filter-group">
-                    <div class="filter-title">被兑换币种</div>
+                    <div class="filter-title">${languageManager.getText('exchangedFilter')}</div>
                     <div id="toTokens" class="token-checkboxes"></div>
                 </div>
             </div>
@@ -2250,7 +2670,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const price = await getTokenPriceInUsdt(expenditureTokenAddress);
                     if (price > 0) {
                         const usdtValue = expenditureAmount * price;
-                        expenditureUsdtValueHtml = `<div class="tx-expenditure-value" style="color: red; font-size: 12px;">支出价值: ≈ ${usdtValue.toFixed(2)} USDT</div>`;
+                        expenditureUsdtValueHtml = `<div class="tx-expenditure-value" style="color: red; font-size: 12px;">${languageManager.getText('expenditureValue')}: ≈ ${usdtValue.toFixed(2)} USDT</div>`;
                     }
                 }
             }
@@ -3033,7 +3453,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const instructionText = document.createElement('div');
         instructionText.className = 'selection-instruction';
         instructionText.innerHTML = `
-            <p>请勾选您想要统计的代币兑换对（可多选）</p>
+            <p>${languageManager.getText('selectPairsPrompt')}</p>
         `;
         pairStatsSelectionContainer.appendChild(instructionText);
         
@@ -3156,13 +3576,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedTokens = Array.from(document.querySelectorAll('input[name="stats-token"]:checked')).map(cb => cb.value);
         
         if (selectedTokens.length === 0) {
-            tokenStatsResultContainer.innerHTML = '<p class="no-stats">请至少选择一个代币进行统计</p>';
+            tokenStatsResultContainer.innerHTML = `<p class="no-stats">${languageManager.getText('selectAtLeastOneToken')}</p>`;
             return;
         }
         
         // 确保有分析结果
         if (!currentResults || currentResults.length === 0) {
-            tokenStatsResultContainer.innerHTML = '<p class="no-stats">请先分析钱包交易</p>';
+            tokenStatsResultContainer.innerHTML = `<p class="no-stats">${languageManager.getText('analyzeWalletFirst')}</p>`;
             return;
         }
         
@@ -3184,13 +3604,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedPairs = Array.from(document.querySelectorAll('input[name="stats-pair"]:checked')).map(cb => cb.value);
         
         if (selectedPairs.length === 0) {
-            tokenStatsResultContainer.innerHTML = '<p class="no-stats">请至少选择一个交易对进行统计</p>';
+            tokenStatsResultContainer.innerHTML = `<p class="no-stats">${languageManager.getText('selectAtLeastOnePair')}</p>`;
             return;
         }
         
         // 确保有分析结果
         if (!currentResults || currentResults.length === 0) {
-            tokenStatsResultContainer.innerHTML = '<p class="no-stats">请先分析钱包交易</p>';
+            tokenStatsResultContainer.innerHTML = `<p class="no-stats">${languageManager.getText('analyzeWalletFirst')}</p>`;
             return;
         }
         
@@ -3198,7 +3618,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedWallet = walletSelector.value;
         
         // 显示加载提示
-        tokenStatsResultContainer.innerHTML = '<div class="loading-stats"><div class="mini-spinner"></div><p>正在计算交易对统计...</p></div>';
+        tokenStatsResultContainer.innerHTML = `<div class="loading-stats"><div class="mini-spinner"></div><p>${languageManager.getText('calculatingPairStats')}</p></div>`;
         
         // 使用setTimeout延迟执行，让UI先更新
         setTimeout(() => {
@@ -3218,7 +3638,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 tokenStatsResultContainer.appendChild(resultInfo);
             } catch (error) {
                 console.error("计算交易对统计时出错:", error);
-                tokenStatsResultContainer.innerHTML = `<p class="error-stats">计算统计时出错: ${error.message}</p>`;
+                tokenStatsResultContainer.innerHTML = `<p class="error-stats">${languageManager.getText('calculationError')}: ${error.message}</p>`;
             }
         }, 50);
     }
@@ -3454,8 +3874,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 生成标题
         const titleText = walletAddress !== 'all' ? 
-            `${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)} 代币交易统计` : 
-            '所有钱包代币交易统计';
+            `${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)} ${languageManager.getText('tokenTransactionStats')}` : 
+            languageManager.getText('allWalletTokenStats');
         
         // 生成表格
         let html = `
@@ -3463,11 +3883,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <table class="token-stats-table">
                 <thead>
                     <tr>
-                        <th>代币</th>
-                        <th>收入</th>
-                        <th>支出</th>
-                        <th>净变化</th>
-                        <th>交易次数</th>
+                        <th>${languageManager.getText('token')}</th>
+                        <th>${languageManager.getText('income')}</th>
+                        <th>${languageManager.getText('expense')}</th>
+                        <th>${languageManager.getText('netChange')}</th>
+                        <th>${languageManager.getText('transactionCount')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -3521,16 +3941,16 @@ document.addEventListener('DOMContentLoaded', () => {
     async function displayPairStats(pairStats, walletAddress = 'all') {
         // 生成标题
         const titleText = walletAddress !== 'all' ? 
-            `${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)} 交易对统计` : 
-            '所有钱包交易对统计';
+            `${walletAddress.substring(0, 6)}...${walletAddress.substring(walletAddress.length - 4)} ${languageManager.getText('pairTransactionStats')}` : 
+            languageManager.getText('allWalletPairStats');
         
         // 创建控制按钮
         let html = `
             <h3>${titleText}</h3>
             <div class="pair-transactions-controls">
-                <button class="btn-sort-date" data-sort="desc">日期排序 <i class="fas fa-sort-down"></i></button>
-                <button class="btn-copy-expenses">复制支出数据 <i class="fas fa-copy"></i></button>
-                <button class="btn-copy-usdt-expenses">复制支出(USDT)数据 <i class="fas fa-copy"></i></button>
+                <button class="btn-sort-date" data-sort="desc">${languageManager.getText('dateSort')} <i class="fas fa-sort-down"></i></button>
+                <button class="btn-copy-expenses">${languageManager.getText('copyExpenseData')} <i class="fas fa-copy"></i></button>
+                <button class="btn-copy-usdt-expenses">${languageManager.getText('copyUsdtExpenseData')} <i class="fas fa-copy"></i></button>
             </div>
         `;
         
@@ -3551,7 +3971,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 为每个交易添加交易对信息
                 tx.pairDisplay = `
                     <span class="token-from">${fromDisplay}</span>
-                    <span class="token-arrow">兑</span>
+                    <span class="token-arrow">${languageManager.getText('exchange')}</span>
                     <span class="token-to">${toDisplay}</span>
                 `;
                 tx.fromToken = fromDisplay;
@@ -3579,13 +3999,13 @@ document.addEventListener('DOMContentLoaded', () => {
             <table class="pair-transactions-table all-transactions-table" id="allTransactionsTable">
                 <thead>
                     <tr>
-                        <th>交易对</th>
-                        <th>日期</th>
-                        <th>支出</th>
-                        <th>支出 (USDT)</th>
-                        <th>收入</th>
-                        <th>价格</th>
-                        <th>交易哈希</th>
+                        <th>${languageManager.getText('tradingPair')}</th>
+                        <th>${languageManager.getText('date')}</th>
+                        <th>${languageManager.getText('expense')}</th>
+                        <th>${languageManager.getText('expenseUsdt')}</th>
+                        <th>${languageManager.getText('income')}</th>
+                        <th>${languageManager.getText('price')}</th>
+                        <th>${languageManager.getText('transactionHash')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -3695,7 +4115,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 添加分割线和汇总标题
         html += `
                 <tr class="summary-header">
-                    <td colspan="7" class="summary-header-text">交易对汇总信息</td>
+                    <td colspan="7" class="summary-header-text">${languageManager.getText('pairSummaryInfo')}</td>
                 </tr>
         `;
         
@@ -3711,7 +4131,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 格式化交易对显示
             const pairDisplay = `
                 <span class="token-from">${fromDisplay}</span>
-                <span class="token-arrow">兑</span>
+                <span class="token-arrow">${languageManager.getText('exchange')}</span>
                 <span class="token-to">${toDisplay}</span>
             `;
 
@@ -3724,7 +4144,7 @@ document.addEventListener('DOMContentLoaded', () => {
             html += `
                 <tr class="pair-summary-row" data-pair="${pair}">
                     <td>${pairDisplay}</td>
-                    <td>交易次数: ${stats.totalTrades}</td>
+                    <td>${languageManager.getText('transactionCountLabel')}: ${stats.totalTrades}</td>
                     <td class="token-stats-expense">
                         <div class="number-container">${formatNumberWithCommas(stats.totalFromAmount.toFixed(4))} ${fromDisplay}</div>
                     </td>
@@ -3793,7 +4213,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </tbody>
             </table>
             <div class="token-stats-summary">
-                <p>总计交易对: ${sortedPairs.length} | 总交易次数: ${totalTrades}</p>
+                <p>${languageManager.getText('totalTradingPairs')}: ${sortedPairs.length} | ${languageManager.getText('totalTransactions')}: ${totalTrades}</p>
             </div>
             <style>
                 /* 控制按钮样式 */
@@ -3983,7 +4403,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // 更新排序按钮状态
             this.setAttribute('data-sort', newSort);
-            this.innerHTML = `日期排序 <i class="fas fa-sort-${newSort === 'desc' ? 'down' : 'up'}"></i>`;
+                            this.innerHTML = `${languageManager.getText('dateSort')} <i class="fas fa-sort-${newSort === 'desc' ? 'down' : 'up'}"></i>`;
             
             // 获取所有交易行（仅交易记录，不包括汇总行）
             const table = document.getElementById('allTransactionsTable');
@@ -4157,24 +4577,25 @@ document.addEventListener('DOMContentLoaded', () => {
         addWallet() {
             const alias = quickWalletAlias.value.trim();
             const address = quickWalletAddress.value.trim();
-            if (!alias) { this.showNotification('请输入钱包别名', 'error'); quickWalletAlias.focus(); return; }
-            if (!address) { this.showNotification('请输入钱包地址', 'error'); quickWalletAddress.focus(); return; }
-            if (!isValidAddress(address)) { this.showNotification('钱包地址格式无效', 'error'); quickWalletAddress.focus(); return; }
-            if (this.wallets.find(w => w.alias === alias)) { this.showNotification('该别名已存在', 'error'); quickWalletAlias.focus(); return; }
-            if (this.wallets.find(w => w.address.toLowerCase() === address.toLowerCase())) { this.showNotification('该钱包地址已存在', 'error'); quickWalletAddress.focus(); return; }
+            if (!alias) { this.showNotification(languageManager.getText('quickWalletAliasRequired') || '请输入钱包别名', 'error'); quickWalletAlias.focus(); return; }
+            if (!address) { this.showNotification(languageManager.getText('quickWalletAddressRequired') || '请输入钱包地址', 'error'); quickWalletAddress.focus(); return; }
+            if (!isValidAddress(address)) { this.showNotification(languageManager.getText('quickWalletAddressInvalid') || '钱包地址格式无效', 'error'); quickWalletAddress.focus(); return; }
+            if (this.wallets.find(w => w.alias === alias)) { this.showNotification(languageManager.getText('quickWalletAliasExists') || '该别名已存在', 'error'); quickWalletAlias.focus(); return; }
+            if (this.wallets.find(w => w.address.toLowerCase() === address.toLowerCase())) { this.showNotification(languageManager.getText('quickWalletAddressExists') || '该钱包地址已存在', 'error'); quickWalletAddress.focus(); return; }
             this.wallets.push({ id: Date.now().toString(), alias, address });
             this.saveWallets();
             this.renderWallets();
             quickWalletAlias.value = '';
             quickWalletAddress.value = '';
-            this.showNotification('快捷钱包添加成功！点击标签可选择地址', 'success');
+            this.showNotification(languageManager.getText('quickWalletAddSuccess') || '快捷钱包添加成功！点击标签可选择地址', 'success');
         }
         deleteWallet(walletId) {
             const wallet = this.wallets.find(w => w.id === walletId);
             if (!wallet) return;
             
             // 显示确认提示
-            if (confirm(`确定要删除快捷钱包 "${wallet.alias}" 吗？\n地址: ${wallet.address}`)) {
+            const confirmMessage = `${languageManager.getText('deleteWalletConfirm')} "${wallet.alias}" 吗？\n${languageManager.getText('walletAddress')}: ${wallet.address}`;
+            if (confirm(confirmMessage)) {
                 const wasSelected = this.selectedIds.has(walletId);
                 this.wallets = this.wallets.filter(w => w.id !== walletId);
                 this.selectedIds.delete(walletId);
@@ -4184,9 +4605,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // 显示删除成功提示
                 if (wasSelected) {
-                    this.showNotification(`已删除快捷钱包 "${wallet.alias}" 并从选择中移除`, 'success');
+                    this.showNotification(`${languageManager.getText('walletDeletedAndRemoved')} "${wallet.alias}"`, 'success');
                 } else {
-                    this.showNotification(`已删除快捷钱包 "${wallet.alias}"`, 'success');
+                    this.showNotification(`${languageManager.getText('walletDeleted')} "${wallet.alias}"`, 'success');
                 }
             }
         }
@@ -4210,9 +4631,9 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // 显示提示信息
             if (selectedAddresses.length > 0) {
-                this.showNotification(`已选择 ${selectedAddresses.length} 个钱包地址`, 'success');
+                this.showNotification(`${languageManager.getText('walletsSelected')} ${selectedAddresses.length} ${languageManager.getText('walletsSelectedCount')}`, 'success');
             } else {
-                this.showNotification('已清空钱包地址选择', 'info');
+                this.showNotification(languageManager.getText('walletsCleared'), 'info');
             }
         }
         renderWallets() {
@@ -4222,7 +4643,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const empty = document.createElement('span');
                 empty.style.color = '#888';
                 empty.style.fontSize = '12px';
-                empty.textContent = '暂无快捷钱包';
+                empty.textContent = languageManager.getText('noQuickWallets');
                 quickWalletChipsRow.appendChild(empty);
                 return;
             }
@@ -4230,7 +4651,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const chip = document.createElement('div');
                 const isSelected = this.selectedIds.has(wallet.id);
                 chip.className = 'quick-wallet-chip' + (isSelected ? ' selected' : '');
-                chip.title = `点击${isSelected ? '取消选择' : '选择'}钱包地址: ${wallet.address}`;
+                chip.title = `${languageManager.getText(isSelected ? 'clickToUnselect' : 'clickToSelect')}: ${wallet.address}`;
                 chip.addEventListener('click', e => {
                     if (e.target.classList.contains('chip-delete')) return;
                     this.toggleSelect(wallet.id);
@@ -4248,7 +4669,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 删除按钮
                 const delBtn = document.createElement('button');
                 delBtn.className = 'chip-delete';
-                delBtn.title = '删除';
+                delBtn.title = languageManager.getText('delete');
                 delBtn.innerHTML = '<i class="fas fa-times"></i>';
                 delBtn.addEventListener('click', e => { e.stopPropagation(); this.deleteWallet(wallet.id); });
                 chip.appendChild(delBtn);

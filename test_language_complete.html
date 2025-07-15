@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>语言切换完整测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .lang-switcher {
+            background: #f3ba2f;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .lang-btn {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 8px 16px;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .lang-btn.active {
+            background: #0f162e;
+            color: white;
+        }
+        .lang-btn:hover {
+            background: #e0e0e0;
+        }
+        .lang-btn.active:hover {
+            background: #0f162e;
+        }
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f9f9f9;
+            border-left: 4px solid #f3ba2f;
+        }
+        .test-item strong {
+            color: #0f162e;
+        }
+        .rtl {
+            direction: rtl;
+            text-align: right;
+        }
+        .rtl .lang-switcher {
+            text-align: center;
+        }
+        h1, h2 {
+            color: #0f162e;
+        }
+        .success {
+            color: #4caf50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="lang-switcher">
+        <button id="langCn" class="lang-btn active" data-lang="cn">中文</button>
+        <button id="langEn" class="lang-btn" data-lang="en">English</button>
+        <button id="langAr" class="lang-btn" data-lang="ar">العربية</button>
+    </div>
+
+    <h1 data-translate="title">语言切换测试页面</h1>
+    
+    <div class="test-section">
+        <h2>新增翻译测试</h2>
+        <div class="test-item">
+            <strong>代币统计标签:</strong> <span data-translate="selectTokensToCalculate">选择要统计的代币:</span>
+        </div>
+        <div class="test-item">
+            <strong>计算按钮:</strong> <span data-translate="calculateSelectedTokenStats">计算所选代币统计</span>
+        </div>
+        <div class="test-item">
+            <strong>全选按钮:</strong> <span data-translate="selectAll">全选</span>
+        </div>
+        <div class="test-item">
+            <strong>取消全选:</strong> <span data-translate="unselectAll">取消全选</span>
+        </div>
+        <div class="test-item">
+            <strong>交易对标签:</strong> <span data-translate="selectPairsToCalculate">选择要统计的代币兑换对:</span>
+        </div>
+        <div class="test-item">
+            <strong>计算交易对:</strong> <span data-translate="calculateSelectedPairStats">计算选定的兑换统计</span>
+        </div>
+        <div class="test-item">
+            <strong>提示信息:</strong> <span data-translate="pleaseSelectContent">请先选择要统计的内容并点击计算按钮</span>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>原有翻译测试</h2>
+        <div class="test-item">
+            <strong>副标题:</strong> <span data-translate="subtitle">分析币安智能链上钱包的交易数据</span>
+        </div>
+        <div class="test-item">
+            <strong>分析按钮:</strong> <span data-translate="analyzeWallet">分析钱包</span>
+        </div>
+        <div class="test-item">
+            <strong>加载提示:</strong> <span data-translate="analyzing">正在分析钱包数据...</span>
+        </div>
+        <div class="test-item">
+            <strong>提示标题:</strong> <span data-translate="tip">提示</span>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>语言切换状态</h2>
+        <div class="test-item">
+            <strong>当前语言:</strong> <span id="currentLang">中文</span>
+        </div>
+        <div class="test-item">
+            <strong>页面方向:</strong> <span id="pageDirection">左到右</span>
+        </div>
+        <div class="test-item">
+            <strong>标题更新:</strong> <span class="success" id="titleStatus">✓ 页面标题已更新</span>
+        </div>
+    </div>
+
+    <script>
+        // 简化的多语言数据结构（仅测试用）
+        const translations = {
+            cn: {
+                title: "语言切换测试页面",
+                subtitle: "分析币安智能链上钱包的交易数据",
+                analyzeWallet: "分析钱包",
+                analyzing: "正在分析钱包数据...",
+                tip: "提示",
+                selectTokensToCalculate: "选择要统计的代币:",
+                calculateSelectedTokenStats: "计算所选代币统计",
+                selectAll: "全选",
+                unselectAll: "取消全选",
+                selectPairsToCalculate: "选择要统计的代币兑换对:",
+                calculateSelectedPairStats: "计算选定的兑换统计",
+                pleaseSelectContent: "请先选择要统计的内容并点击计算按钮"
+            },
+            en: {
+                title: "Language Switch Test Page",
+                subtitle: "Analyze wallet transaction data on Binance Smart Chain",
+                analyzeWallet: "Analyze Wallet",
+                analyzing: "Analyzing wallet data...",
+                tip: "Tip",
+                selectTokensToCalculate: "Select tokens to calculate:",
+                calculateSelectedTokenStats: "Calculate Selected Token Statistics",
+                selectAll: "Select All",
+                unselectAll: "Unselect All",
+                selectPairsToCalculate: "Select trading pairs to calculate:",
+                calculateSelectedPairStats: "Calculate Selected Pair Statistics",
+                pleaseSelectContent: "Please select content to calculate and click the calculate button"
+            },
+            ar: {
+                title: "صفحة اختبار تبديل اللغة",
+                subtitle: "تحليل بيانات معاملات المحفظة على بينانس الذكية",
+                analyzeWallet: "تحليل المحفظة",
+                analyzing: "جارٍ تحليل بيانات المحفظة...",
+                tip: "نصيحة",
+                selectTokensToCalculate: "اختر الرموز المميزة للحساب:",
+                calculateSelectedTokenStats: "حساب إحصائيات الرموز المميزة المحددة",
+                selectAll: "تحديد الكل",
+                unselectAll: "إلغاء تحديد الكل",
+                selectPairsToCalculate: "اختر أزواج التداول للحساب:",
+                calculateSelectedPairStats: "حساب إحصائيات الأزواج المحددة",
+                pleaseSelectContent: "يرجى اختيار المحتوى للحساب والنقر على زر الحساب"
+            }
+        };
+
+        let currentLanguage = 'cn';
+
+        // 语言切换功能
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // 设置页面方向
+            if (lang === 'ar') {
+                document.documentElement.classList.add('rtl');
+                document.documentElement.dir = 'rtl';
+                document.getElementById('pageDirection').textContent = 'من اليمين إلى اليسار';
+            } else {
+                document.documentElement.classList.remove('rtl');
+                document.documentElement.dir = 'ltr';
+                document.getElementById('pageDirection').textContent = lang === 'cn' ? '左到右' : 'Left to Right';
+            }
+
+            // 翻译所有文本
+            const langData = translations[lang];
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+
+            // 更新页面标题
+            document.title = langData.title;
+            
+            // 更新语言状态显示
+            const langNames = { cn: '中文', en: 'English', ar: 'العربية' };
+            document.getElementById('currentLang').textContent = langNames[lang];
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 绑定语言切换按钮
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const lang = btn.getAttribute('data-lang');
+                    switchLanguage(lang);
+                });
+            });
+
+            // 初始化为中文
+            switchLanguage('cn');
+        });
+    </script>
+</body>
+</html> 

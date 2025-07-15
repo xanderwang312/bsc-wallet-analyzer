@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多语言测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .language-switcher {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 5px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .lang-btn {
+            background: transparent;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .lang-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .lang-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .rtl {
+            direction: rtl;
+            text-align: right;
+        }
+
+        .rtl .language-switcher {
+            right: auto;
+            left: 10px;
+        }
+
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        h1, h2 {
+            margin-top: 0;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .rtl input, .rtl textarea {
+            text-align: right;
+        }
+
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="language-switcher">
+        <button class="lang-btn active" data-lang="cn">中文</button>
+        <button class="lang-btn" data-lang="en">English</button>
+        <button class="lang-btn" data-lang="ar">العربية</button>
+    </div>
+
+    <div class="test-container">
+        <div class="test-section">
+            <h1 data-translate="title">Alpha BSC钱包交易分析工具</h1>
+            <p data-translate="subtitle">分析币安智能链上钱包的交易数据</p>
+        </div>
+
+        <div class="test-section">
+            <h2 data-translate="apiSettings">API设置</h2>
+            <label for="apiKey" data-translate="bscScanApiKey">BscScan API密钥:</label>
+            <input type="password" id="apiKey" data-translate-placeholder="bscScanApiKeyPlaceholder" placeholder="输入您的BscScan API密钥">
+        </div>
+
+        <div class="test-section">
+            <h2 data-translate="walletAddress">钱包地址</h2>
+            <label for="walletAddresses" data-translate="inputWalletAddresses">输入钱包地址(每行一个):</label>
+            <textarea id="walletAddresses" rows="3" data-translate-placeholder="walletAddressExample" placeholder="0x8894e0a0c962cb723c1976a4421c95949be2d4e3"></textarea>
+        </div>
+
+        <div class="test-section">
+            <button data-translate="analyzeWallet">分析钱包</button>
+            <button data-translate="viewLatestTransactions">查看最新交易</button>
+        </div>
+    </div>
+
+    <script>
+        // 简化的多语言数据
+        const translations = {
+            cn: {
+                title: "Alpha BSC钱包交易分析工具",
+                subtitle: "分析币安智能链上钱包的交易数据",
+                apiSettings: "API设置",
+                bscScanApiKey: "BscScan API密钥:",
+                bscScanApiKeyPlaceholder: "输入您的BscScan API密钥",
+                walletAddress: "钱包地址",
+                inputWalletAddresses: "输入钱包地址(每行一个):",
+                walletAddressExample: "0x8894e0a0c962cb723c1976a4421c95949be2d4e3",
+                analyzeWallet: "分析钱包",
+                viewLatestTransactions: "查看最新交易"
+            },
+            en: {
+                title: "Alpha BSC Wallet Transaction Analysis Tool",
+                subtitle: "Analyze wallet transaction data on Binance Smart Chain",
+                apiSettings: "API Settings",
+                bscScanApiKey: "BscScan API Key:",
+                bscScanApiKeyPlaceholder: "Enter your BscScan API key",
+                walletAddress: "Wallet Address",
+                inputWalletAddresses: "Enter wallet addresses (one per line):",
+                walletAddressExample: "0x8894e0a0c962cb723c1976a4421c95949be2d4e3",
+                analyzeWallet: "Analyze Wallet",
+                viewLatestTransactions: "View Latest Transactions"
+            },
+            ar: {
+                title: "أداة تحليل معاملات محفظة BSC الأساسية",
+                subtitle: "تحليل بيانات معاملات المحفظة على بينانس الذكية",
+                apiSettings: "إعدادات API",
+                bscScanApiKey: "مفتاح BscScan API:",
+                bscScanApiKeyPlaceholder: "أدخل مفتاح BscScan API الخاص بك",
+                walletAddress: "عنوان المحفظة",
+                inputWalletAddresses: "أدخل عناوين المحافظ (واحد في كل سطر):",
+                walletAddressExample: "0x8894e0a0c962cb723c1976a4421c95949be2d4e3",
+                analyzeWallet: "تحليل المحفظة",
+                viewLatestTransactions: "عرض أحدث المعاملات"
+            }
+        };
+
+        // 简化的语言管理器
+        class LanguageManager {
+            constructor() {
+                this.currentLanguage = localStorage.getItem('selectedLanguage') || 'cn';
+                this.init();
+            }
+
+            init() {
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const lang = btn.getAttribute('data-lang');
+                        this.setLanguage(lang);
+                    });
+                });
+                this.applyLanguage(this.currentLanguage);
+            }
+
+            setLanguage(lang) {
+                this.currentLanguage = lang;
+                localStorage.setItem('selectedLanguage', lang);
+                this.applyLanguage(lang);
+            }
+
+            applyLanguage(lang) {
+                // 更新按钮状态
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('data-lang') === lang) {
+                        btn.classList.add('active');
+                    }
+                });
+
+                // 设置页面方向（阿拉伯语为RTL）
+                if (lang === 'ar') {
+                    document.documentElement.classList.add('rtl');
+                    document.documentElement.dir = 'rtl';
+                } else {
+                    document.documentElement.classList.remove('rtl');
+                    document.documentElement.dir = 'ltr';
+                }
+
+                // 翻译所有文本
+                const langData = translations[lang];
+                
+                // 处理基本翻译
+                document.querySelectorAll('[data-translate]').forEach(element => {
+                    const key = element.getAttribute('data-translate');
+                    if (langData[key]) {
+                        element.textContent = langData[key];
+                    }
+                });
+
+                // 处理占位符翻译
+                document.querySelectorAll('[data-translate-placeholder]').forEach(element => {
+                    const key = element.getAttribute('data-translate-placeholder');
+                    if (langData[key]) {
+                        element.setAttribute('placeholder', langData[key]);
+                    }
+                });
+
+                // 更新文档标题
+                document.title = langData.title;
+            }
+        }
+
+        // 页面加载完成后初始化语言管理器
+        document.addEventListener('DOMContentLoaded', () => {
+            new LanguageManager();
+        });
+    </script>
+</body>
+</html> 

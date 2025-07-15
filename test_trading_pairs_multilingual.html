@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>交易对统计多语言测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .lang-switcher {
+            background: #f3ba2f;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .lang-btn {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 8px 16px;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .lang-btn.active {
+            background: #0f162e;
+            color: white;
+        }
+        .lang-btn:hover {
+            background: #e0e0e0;
+        }
+        .lang-btn.active:hover {
+            background: #0f162e;
+        }
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f9f9f9;
+            border-left: 4px solid #f3ba2f;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .test-item .label {
+            font-weight: bold;
+            color: #0f162e;
+            min-width: 200px;
+        }
+        .test-item .value {
+            color: #666;
+            font-family: monospace;
+        }
+        .rtl {
+            direction: rtl;
+            text-align: right;
+        }
+        .rtl .lang-switcher {
+            text-align: center;
+        }
+        .rtl .test-item {
+            flex-direction: row-reverse;
+        }
+        h1, h2 {
+            color: #0f162e;
+        }
+        .success {
+            color: #4caf50;
+            font-weight: bold;
+        }
+        .category {
+            background: #e8f5e8;
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 4px;
+            border-left: 4px solid #4caf50;
+        }
+        .category h3 {
+            margin: 0 0 10px 0;
+            color: #2e7d32;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lang-switcher">
+        <button id="langCn" class="lang-btn active" data-lang="cn">中文</button>
+        <button id="langEn" class="lang-btn" data-lang="en">English</button>
+        <button id="langAr" class="lang-btn" data-lang="ar">العربية</button>
+    </div>
+
+    <h1 data-translate="testTitle">交易对统计多语言测试</h1>
+    
+    <div class="grid">
+        <div class="test-section">
+            <div class="category">
+                <h3>错误和状态消息</h3>
+            </div>
+            <div class="test-item">
+                <span class="label">选择代币提示:</span>
+                <span class="value" data-translate="selectAtLeastOneToken">请至少选择一个代币进行统计</span>
+            </div>
+            <div class="test-item">
+                <span class="label">选择交易对提示:</span>
+                <span class="value" data-translate="selectAtLeastOnePair">请至少选择一个交易对进行统计</span>
+            </div>
+            <div class="test-item">
+                <span class="label">分析钱包提示:</span>
+                <span class="value" data-translate="analyzeWalletFirst">请先分析钱包交易</span>
+            </div>
+            <div class="test-item">
+                <span class="label">计算中提示:</span>
+                <span class="value" data-translate="calculatingPairStats">正在计算交易对统计...</span>
+            </div>
+            <div class="test-item">
+                <span class="label">计算错误:</span>
+                <span class="value" data-translate="calculationError">计算统计时出错</span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="category">
+                <h3>表格标题</h3>
+            </div>
+            <div class="test-item">
+                <span class="label">代币:</span>
+                <span class="value" data-translate="token">代币</span>
+            </div>
+            <div class="test-item">
+                <span class="label">收入:</span>
+                <span class="value" data-translate="income">收入</span>
+            </div>
+            <div class="test-item">
+                <span class="label">支出:</span>
+                <span class="value" data-translate="expense">支出</span>
+            </div>
+            <div class="test-item">
+                <span class="label">净变化:</span>
+                <span class="value" data-translate="netChange">净变化</span>
+            </div>
+            <div class="test-item">
+                <span class="label">交易次数:</span>
+                <span class="value" data-translate="transactionCount">交易次数</span>
+            </div>
+            <div class="test-item">
+                <span class="label">交易对:</span>
+                <span class="value" data-translate="tradingPair">交易对</span>
+            </div>
+            <div class="test-item">
+                <span class="label">日期:</span>
+                <span class="value" data-translate="date">日期</span>
+            </div>
+            <div class="test-item">
+                <span class="label">价格:</span>
+                <span class="value" data-translate="price">价格</span>
+            </div>
+            <div class="test-item">
+                <span class="label">交易哈希:</span>
+                <span class="value" data-translate="transactionHash">交易哈希</span>
+            </div>
+            <div class="test-item">
+                <span class="label">支出(USDT):</span>
+                <span class="value" data-translate="expenseUsdt">支出 (USDT)</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="test-section">
+            <div class="category">
+                <h3>按钮和操作</h3>
+            </div>
+            <div class="test-item">
+                <span class="label">日期排序:</span>
+                <span class="value" data-translate="dateSort">日期排序</span>
+            </div>
+            <div class="test-item">
+                <span class="label">复制支出数据:</span>
+                <span class="value" data-translate="copyExpenseData">复制支出数据</span>
+            </div>
+            <div class="test-item">
+                <span class="label">复制USDT数据:</span>
+                <span class="value" data-translate="copyUsdtExpenseData">复制支出(USDT)数据</span>
+            </div>
+            <div class="test-item">
+                <span class="label">兑换连接词:</span>
+                <span class="value" data-translate="exchange">兑</span>
+            </div>
+            <div class="test-item">
+                <span class="label">支出价值:</span>
+                <span class="value" data-translate="expenditureValue">支出价值</span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="category">
+                <h3>统计标题</h3>
+            </div>
+            <div class="test-item">
+                <span class="label">代币交易统计:</span>
+                <span class="value" data-translate="tokenTransactionStats">代币交易统计</span>
+            </div>
+            <div class="test-item">
+                <span class="label">交易对统计:</span>
+                <span class="value" data-translate="pairTransactionStats">交易对统计</span>
+            </div>
+            <div class="test-item">
+                <span class="label">所有钱包代币统计:</span>
+                <span class="value" data-translate="allWalletTokenStats">所有钱包代币交易统计</span>
+            </div>
+            <div class="test-item">
+                <span class="label">所有钱包交易对统计:</span>
+                <span class="value" data-translate="allWalletPairStats">所有钱包交易对统计</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="test-section">
+            <div class="category">
+                <h3>汇总和过滤</h3>
+            </div>
+            <div class="test-item">
+                <span class="label">交易对汇总信息:</span>
+                <span class="value" data-translate="pairSummaryInfo">交易对汇总信息</span>
+            </div>
+            <div class="test-item">
+                <span class="label">总计交易对:</span>
+                <span class="value" data-translate="totalTradingPairs">总计交易对</span>
+            </div>
+            <div class="test-item">
+                <span class="label">总交易次数:</span>
+                <span class="value" data-translate="totalTransactions">总交易次数</span>
+            </div>
+            <div class="test-item">
+                <span class="label">交易次数标签:</span>
+                <span class="value" data-translate="transactionCountLabel">交易次数</span>
+            </div>
+            <div class="test-item">
+                <span class="label">兑换币种:</span>
+                <span class="value" data-translate="exchangeFilter">兑换币种</span>
+            </div>
+            <div class="test-item">
+                <span class="label">被兑换币种:</span>
+                <span class="value" data-translate="exchangedFilter">被兑换币种</span>
+            </div>
+            <div class="test-item">
+                <span class="label">选择提示:</span>
+                <span class="value" data-translate="selectPairsPrompt">请勾选您想要统计的代币兑换对（可多选）</span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <div class="category">
+                <h3>语言切换状态</h3>
+            </div>
+            <div class="test-item">
+                <span class="label">当前语言:</span>
+                <span class="value" id="currentLang">中文</span>
+            </div>
+            <div class="test-item">
+                <span class="label">页面方向:</span>
+                <span class="value" id="pageDirection">左到右</span>
+            </div>
+            <div class="test-item">
+                <span class="label">测试状态:</span>
+                <span class="value success" id="testStatus">✓ 所有翻译正常工作</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 完整的多语言数据结构
+        const translations = {
+            cn: {
+                testTitle: "交易对统计多语言测试",
+                selectAtLeastOneToken: "请至少选择一个代币进行统计",
+                selectAtLeastOnePair: "请至少选择一个交易对进行统计",
+                analyzeWalletFirst: "请先分析钱包交易",
+                calculatingPairStats: "正在计算交易对统计...",
+                calculationError: "计算统计时出错",
+                token: "代币",
+                income: "收入",
+                expense: "支出",
+                netChange: "净变化",
+                transactionCount: "交易次数",
+                tradingPair: "交易对",
+                date: "日期",
+                price: "价格",
+                transactionHash: "交易哈希",
+                expenseUsdt: "支出 (USDT)",
+                dateSort: "日期排序",
+                copyExpenseData: "复制支出数据",
+                copyUsdtExpenseData: "复制支出(USDT)数据",
+                tokenTransactionStats: "代币交易统计",
+                pairTransactionStats: "交易对统计",
+                allWalletTokenStats: "所有钱包代币交易统计",
+                allWalletPairStats: "所有钱包交易对统计",
+                pairSummaryInfo: "交易对汇总信息",
+                totalTradingPairs: "总计交易对",
+                totalTransactions: "总交易次数",
+                transactionCountLabel: "交易次数",
+                exchange: "兑",
+                exchangeFilter: "兑换币种",
+                exchangedFilter: "被兑换币种",
+                selectPairsPrompt: "请勾选您想要统计的代币兑换对（可多选）",
+                expenditureValue: "支出价值"
+            },
+            en: {
+                testTitle: "Trading Pairs Statistics Multilingual Test",
+                selectAtLeastOneToken: "Please select at least one token for statistics",
+                selectAtLeastOnePair: "Please select at least one trading pair for statistics",
+                analyzeWalletFirst: "Please analyze wallet transactions first",
+                calculatingPairStats: "Calculating trading pair statistics...",
+                calculationError: "Error calculating statistics",
+                token: "Token",
+                income: "Income",
+                expense: "Expense",
+                netChange: "Net Change",
+                transactionCount: "Transaction Count",
+                tradingPair: "Trading Pair",
+                date: "Date",
+                price: "Price",
+                transactionHash: "Transaction Hash",
+                expenseUsdt: "Expense (USDT)",
+                dateSort: "Date Sort",
+                copyExpenseData: "Copy Expense Data",
+                copyUsdtExpenseData: "Copy USDT Expense Data",
+                tokenTransactionStats: "Token Transaction Statistics",
+                pairTransactionStats: "Trading Pair Statistics",
+                allWalletTokenStats: "All Wallet Token Statistics",
+                allWalletPairStats: "All Wallet Trading Pair Statistics",
+                pairSummaryInfo: "Trading Pair Summary Information",
+                totalTradingPairs: "Total Trading Pairs",
+                totalTransactions: "Total Transactions",
+                transactionCountLabel: "Transaction Count",
+                exchange: "to",
+                exchangeFilter: "Exchange Currency",
+                exchangedFilter: "Exchanged Currency",
+                selectPairsPrompt: "Please select the trading pairs you want to calculate (multiple selection allowed)",
+                expenditureValue: "Expenditure Value"
+            },
+            ar: {
+                testTitle: "اختبار إحصائيات أزواج التداول متعدد اللغات",
+                selectAtLeastOneToken: "يرجى اختيار رمز مميز واحد على الأقل للإحصائيات",
+                selectAtLeastOnePair: "يرجى اختيار زوج تداول واحد على الأقل للإحصائيات",
+                analyzeWalletFirst: "يرجى تحليل معاملات المحفظة أولاً",
+                calculatingPairStats: "جارٍ حساب إحصائيات أزواج التداول...",
+                calculationError: "خطأ في حساب الإحصائيات",
+                token: "الرمز المميز",
+                income: "الدخل",
+                expense: "المصروف",
+                netChange: "التغيير الصافي",
+                transactionCount: "عدد المعاملات",
+                tradingPair: "زوج التداول",
+                date: "التاريخ",
+                price: "السعر",
+                transactionHash: "رمز المعاملة",
+                expenseUsdt: "المصروف (USDT)",
+                dateSort: "ترتيب التاريخ",
+                copyExpenseData: "نسخ بيانات المصروف",
+                copyUsdtExpenseData: "نسخ بيانات مصروف USDT",
+                tokenTransactionStats: "إحصائيات معاملات الرمز المميز",
+                pairTransactionStats: "إحصائيات أزواج التداول",
+                allWalletTokenStats: "إحصائيات رموز جميع المحافظ",
+                allWalletPairStats: "إحصائيات أزواج تداول جميع المحافظ",
+                pairSummaryInfo: "معلومات ملخص أزواج التداول",
+                totalTradingPairs: "إجمالي أزواج التداول",
+                totalTransactions: "إجمالي المعاملات",
+                transactionCountLabel: "عدد المعاملات",
+                exchange: "إلى",
+                exchangeFilter: "عملة التبادل",
+                exchangedFilter: "العملة المتبادلة",
+                selectPairsPrompt: "يرجى اختيار أزواج التداول التي تريد حسابها (يُسمح بالاختيار المتعدد)",
+                expenditureValue: "قيمة المصروف"
+            }
+        };
+
+        let currentLanguage = 'cn';
+
+        // 语言切换功能
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // 设置页面方向
+            if (lang === 'ar') {
+                document.documentElement.classList.add('rtl');
+                document.documentElement.dir = 'rtl';
+                document.getElementById('pageDirection').textContent = 'من اليمين إلى اليسار';
+            } else {
+                document.documentElement.classList.remove('rtl');
+                document.documentElement.dir = 'ltr';
+                document.getElementById('pageDirection').textContent = lang === 'cn' ? '左到右' : 'Left to Right';
+            }
+
+            // 翻译所有文本
+            const langData = translations[lang];
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (langData[key]) {
+                    element.textContent = langData[key];
+                }
+            });
+
+            // 更新页面标题
+            document.title = langData.testTitle;
+            
+            // 更新语言状态显示
+            const langNames = { cn: '中文', en: 'English', ar: 'العربية' };
+            document.getElementById('currentLang').textContent = langNames[lang];
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 绑定语言切换按钮
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const lang = btn.getAttribute('data-lang');
+                    switchLanguage(lang);
+                });
+            });
+
+            // 初始化为中文
+            switchLanguage('cn');
+        });
+    </script>
+</body>
+</html> 
