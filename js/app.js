@@ -30,6 +30,7 @@ const translations = {
         defaultTimeNote: "默认时间范围: 如果当前时间在8:00AM之后，则选择今天8:00AM到现在；否则选择前一天8:00AM到现在",
         walletAddress: "钱包地址",
         walletAddressAssociatedSum: "钱包地址2被交易量总金额",
+        score: "分数",
         aliasPlaceholder: "别名",
         walletAddressPlaceholder: "钱包地址0x...",
         add: "添加",
@@ -131,6 +132,7 @@ const translations = {
         defaultTimeNote: "Default time range: If current time is after 8:00AM, select today 8:00AM to now; otherwise select previous day 8:00AM to now",
         walletAddress: "Wallet Address",
         walletAddressAssociatedSum: "Wallet Address 2x Transaction Total Amount",
+        score: "Score",
         aliasPlaceholder: "Alias",
         walletAddressPlaceholder: "Wallet Address 0x...",
         add: "Add",
@@ -232,6 +234,7 @@ const translations = {
         defaultTimeNote: "النطاق الزمني الافتراضي: إذا كان الوقت الحالي بعد الساعة 8:00 صباحاً، اختر اليوم 8:00 صباحاً إلى الآن؛ وإلا اختر اليوم السابق 8:00 صباحاً إلى الآن",
         walletAddress: "عنوان المحفظة",
         walletAddressAssociatedSum: "المبلغ الإجمالي لمعاملات عنوان المحفظة 2x",
+        score: "النتيجة",
         aliasPlaceholder: "الاسم المستعار",
         walletAddressPlaceholder: "عنوان المحفظة 0x...",
         add: "إضافة",
@@ -418,6 +421,15 @@ class LanguageManager {
         if (window.quickWalletManager) {
             window.quickWalletManager.renderWallets();
         }
+
+        // 更新分数显示（如果存在）
+        const scoreElement = document.getElementById('walletAddressAssociatedScore');
+        if (scoreElement) {
+            const currentScore = scoreElement.textContent.match(/\d+/);
+            if (currentScore) {
+                scoreElement.innerHTML = `(${langData.score}: ${currentScore[0]})`;
+            }
+        }
     }
 
     // 获取当前语言的翻译文本
@@ -444,6 +456,44 @@ function formatNumberWithCommas(num) {
     
     // 重新组合整数和小数部分
     return parts.join('.');
+}
+
+/**
+ * 根据交易量计算分数
+ * @param {number} amount - 交易量金额
+ * @returns {number} 对应的分数
+ */
+function calculateScore(amount) {
+    const scoreMap = {
+        2: 1, 4: 2, 8: 3, 16: 4, 32: 5, 64: 6, 128: 7, 256: 8, 512: 9, 1024: 10,
+        2048: 11, 4096: 12, 8192: 13, 16384: 14, 32768: 15, 65536: 16, 131072: 17,
+        262144: 18, 524288: 19, 1048576: 20, 2097152: 21, 4194304: 22, 8388608: 23,
+        16777216: 24, 33554432: 25
+    };
+    
+    // 如果金额正好匹配某个值，直接返回对应分数
+    if (scoreMap[amount] !== undefined) {
+        return scoreMap[amount];
+    }
+    
+    // 如果金额小于2，返回0
+    if (amount < 2) {
+        return 0;
+    }
+    
+    // 找到最接近的分数
+    const amounts = Object.keys(scoreMap).map(Number).sort((a, b) => a - b);
+    let closestScore = 0;
+    
+    for (let i = 0; i < amounts.length; i++) {
+        if (amount >= amounts[i]) {
+            closestScore = scoreMap[amounts[i]];
+        } else {
+            break;
+        }
+    }
+    
+    return closestScore;
 }
 
 // 全局语言管理器实例
@@ -4109,8 +4159,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const grandTotalDoubledExpenses = grandTotalUsdt * 2;
         const formattedGrandTotalDoubledExpenses = formatNumberWithCommas(grandTotalDoubledExpenses.toFixed(4));
         
+        // 计算分数
+        const score = calculateScore(grandTotalDoubledExpenses);
+        
         // walletAddressAssociatedSum
         document.getElementById('walletAddressAssociatedSumValue').innerHTML = `${formattedGrandTotalDoubledExpenses}`;
+        document.getElementById('walletAddressAssociatedScore').innerHTML = `(${languageManager.getText('score')}: ${score})`;
 
         // 添加分割线和汇总标题
         html += `

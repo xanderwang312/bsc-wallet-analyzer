@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>语言切换按钮移动端测试</title>
+    <style>
+        :root {
+            --primary-color: #f3ba2f;
+            --secondary-color: #0f162e;
+            --text-color: #333;
+            --card-bg: #fff;
+            --border-color: #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fb;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .language-switcher {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            z-index: 1000;
+        }
+        
+        .lang-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 4px;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-family: inherit;
+            min-width: 50px;
+            text-align: center;
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        .lang-btn:hover {
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+        
+        .lang-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--secondary-color);
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(243, 186, 47, 0.3);
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .language-switcher {
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                justify-content: center;
+                gap: 4px;
+                padding: 6px;
+                border-radius: 6px;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            }
+            
+            .lang-btn {
+                flex: 1;
+                max-width: 80px;
+                padding: 8px 6px;
+                font-size: 0.8rem;
+                min-width: auto;
+                border-radius: 4px;
+                min-height: 36px;
+            }
+            
+            .lang-btn:active {
+                transform: scale(0.95);
+                transition: transform 0.1s ease;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .language-switcher {
+                top: 8px;
+                right: 8px;
+                left: 8px;
+                padding: 4px;
+                gap: 2px;
+            }
+            
+            .lang-btn {
+                padding: 6px 4px;
+                font-size: 0.75rem;
+                max-width: 70px;
+                min-height: 32px;
+            }
+            
+            .lang-btn:active {
+                transform: scale(0.95);
+                transition: transform 0.1s ease;
+            }
+        }
+
+        header {
+            position: relative;
+            padding-top: 60px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--secondary-color);
+        }
+
+        /* 移动端header适配 */
+        @media (max-width: 768px) {
+            header {
+                padding-top: 80px;
+            }
+            
+            header h1 {
+                font-size: 1.5rem;
+                margin-bottom: 8px;
+            }
+            
+            header p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding-top: 70px;
+            }
+            
+            header h1 {
+                font-size: 1.3rem;
+            }
+            
+            header p {
+                font-size: 0.85rem;
+            }
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .test-content {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .device-info {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .test-instructions {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .test-instructions h3 {
+            color: #e65100;
+            margin-bottom: 10px;
+        }
+
+        .test-instructions ul {
+            margin-left: 20px;
+        }
+
+        .test-instructions li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="language-switcher">
+                <button id="langCn" class="lang-btn active" data-lang="cn">中文</button>
+                <button id="langEn" class="lang-btn" data-lang="en">English</button>
+                <button id="langAr" class="lang-btn" data-lang="ar">العربية</button>
+            </div>
+            <h1>语言切换按钮移动端测试</h1>
+            <p>测试语言切换按钮在不同屏幕尺寸下的显示效果</p>
+        </header>
+
+        <div class="test-content">
+            <h2>测试说明</h2>
+            <p>这个页面用于测试语言切换按钮在移动端的适配效果。请在不同设备或浏览器开发者工具中测试以下功能：</p>
+            
+            <div class="device-info">
+                <h3>设备信息</h3>
+                <p><strong>屏幕宽度：</strong><span id="screenWidth"></span></p>
+                <p><strong>设备像素比：</strong><span id="devicePixelRatio"></span></p>
+                <p><strong>用户代理：</strong><span id="userAgent"></span></p>
+            </div>
+
+            <div class="test-instructions">
+                <h3>测试步骤</h3>
+                <ul>
+                    <li>在桌面浏览器中打开开发者工具</li>
+                    <li>切换到移动设备模拟模式</li>
+                    <li>测试不同屏幕尺寸（320px, 375px, 768px等）</li>
+                    <li>检查语言切换按钮的位置和大小</li>
+                    <li>测试按钮的触摸响应</li>
+                    <li>验证RTL语言（阿拉伯语）的显示效果</li>
+                </ul>
+            </div>
+
+            <div class="test-content">
+                <h3>语言切换功能测试</h3>
+                <p>点击上方的语言按钮来测试切换功能：</p>
+                <ul>
+                    <li><strong>中文：</strong>默认语言，LTR布局</li>
+                    <li><strong>English：</strong>英文界面，LTR布局</li>
+                    <li><strong>العربية：</strong>阿拉伯语界面，RTL布局</li>
+                </ul>
+            </div>
+
+            <div class="test-content">
+                <h3>移动端特性</h3>
+                <ul>
+                    <li>✅ 固定定位，始终可见</li>
+                    <li>✅ 毛玻璃效果背景</li>
+                    <li>✅ 触摸友好的按钮大小</li>
+                    <li>✅ 触摸反馈动画</li>
+                    <li>✅ 响应式布局</li>
+                    <li>✅ RTL语言支持</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 显示设备信息
+        document.getElementById('screenWidth').textContent = window.innerWidth + 'px';
+        document.getElementById('devicePixelRatio').textContent = window.devicePixelRatio;
+        document.getElementById('userAgent').textContent = navigator.userAgent.substring(0, 100) + '...';
+
+        // 语言切换功能
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 移除所有active类
+                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                // 添加active类到当前按钮
+                btn.classList.add('active');
+                
+                const lang = btn.getAttribute('data-lang');
+                
+                // 设置页面方向
+                if (lang === 'ar') {
+                    document.documentElement.classList.add('rtl');
+                    document.documentElement.dir = 'rtl';
+                } else {
+                    document.documentElement.classList.remove('rtl');
+                    document.documentElement.dir = 'ltr';
+                }
+                
+                // 显示切换信息
+                const messages = {
+                    cn: '已切换到中文',
+                    en: 'Switched to English',
+                    ar: 'تم التبديل إلى العربية'
+                };
+                
+                alert(messages[lang] || 'Language switched');
+            });
+        });
+
+        // 监听窗口大小变化
+        window.addEventListener('resize', () => {
+            document.getElementById('screenWidth').textContent = window.innerWidth + 'px';
+        });
+    </script>
+</body>
+</html> 
